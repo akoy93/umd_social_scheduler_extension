@@ -30,7 +30,7 @@ window.fbAsyncInit = function() {
     });
   }
 
-  function updateLoginStatus(response) {
+  FB.Event.subscribe('auth.statusChange', function(response) {
     // user is already logged in and connected
     if (response.authResponse) {
       loader.style.display = "block";
@@ -43,6 +43,7 @@ window.fbAsyncInit = function() {
       logoutButton.onclick = function() {
         FB.logout(function() {
           userInfo.innerHTML = "";
+          handleLogin.called = false;
           var logoutEvent = document.createEvent('Event');
           logoutEvent.initEvent('logout', true, true);
           userInfo.dispatchEvent(logoutEvent);
@@ -57,9 +58,7 @@ window.fbAsyncInit = function() {
       loginButton.onclick = function() {
         FB.login(function(response) {
           loader.style.display = "block";
-          if (response.authResponse) {
-            handleLogin(response);
-          } else {
+          if (!response.authResponse) {
             //user cancelled login or did not grant authorization
             loader.style.display = "none";
             alert('Failed to connect to Facebook.');
@@ -67,10 +66,7 @@ window.fbAsyncInit = function() {
         }, {scope: 'publish_actions'});
       };
     }
-  }
-
-  FB.getLoginStatus(updateLoginStatus);
-  FB.Event.subscribe('auth.statusChange', updateLoginStatus);
+  });
 };
 
 // insert the fb-root div and load the Facebook Javascript SDK asynchronously

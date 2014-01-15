@@ -6,20 +6,8 @@ var COURSES_CSS_PATH = 'html body table tbody tr td table tbody tr td font cente
 var SCHEDULE_PATH = 'html body table tbody tr td table tbody tr td font center';
 
 $(document).ready(function() {
-  // render the user's schedule on the server
-  (function() {
-    var scheduleHTML = $(SCHEDULE_PATH).html();
-    console.log(scheduleHTML);
-    $("#" + USER_INFO_DIV_ID).on("session", function() {
-      $.post(API_URL + "render_schedule", { term: term, html: scheduleHTML }, function(response) {
-        if (!response.success) {
-          alert("An error occurred while rendering schedule HTML.");
-        }
-      }, "json");
-    });
-  })();
-
-  renderLoginTemplate(SCHEDULE_PATH);
+  var scheduleHTML = $(SCHEDULE_PATH).html();
+  renderLoginTemplate(SCHEDULE_PATH, true);
   handleLoginLogoutEvents();
 
   var classCodes = [];
@@ -61,6 +49,35 @@ $(document).ready(function() {
           alert("An error occurred while sending schedule data.");
         }
       }, "json");
+    });
+  })();
+
+  // render the user's schedule on the server and add button for sharing schedule
+  (function() {
+    $("#" + USER_INFO_DIV_ID).on("session", function() {
+      $.post(API_URL + "render_schedule", { term: term, html: scheduleHTML }, function(response) {
+        // successfully rendered schedule: show share button
+        if (response.success) {
+          $("#" + SHARE_BUTTON_ID).show();
+        } else {
+          alert("An error occurred while rendering schedule HTML.");
+        }
+      }, "json");
+    });
+  })();
+
+  // set click listener for posting a schedule on facebook
+  (function() {
+    $("#" + SHARE_BUTTON_ID).click(function() {
+      $.getJSON(API_URL + "post_schedule", function(response) {
+        if (response.success) {
+          alert("Your schedule has been posted on Facebook!" 
+            + " Check your UMD Social Scheduler album!");
+        } else {
+          alert("Unable to post your schedule. Make sure you have allowed"
+            + " UMD Social Scheduler to post to Facebook on your behalf (re-login to allow).");
+        }
+      });
     });
   })();
 });
