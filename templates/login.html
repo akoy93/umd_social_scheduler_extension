@@ -1,6 +1,8 @@
 {{! Handlebars template for login html }}
 {{! Parameters: login_button_id, logout_button_id, user_div_id, loader_id, }}
-{{! login_button_path, logout_button_path, loader_path }}
+{{! login_button_path, logout_button_path, loader_path, login_info_div_id }}
+<br />
+<div id="{{login_info_div_id}}"></div>
 <br />
 <img style="cursor: hand; display: none;" id="{{login_button_id}}" src="{{login_button_path}}" width="175"></img>
 <img style="cursor: hand; display: none;" id="{{logout_button_id}}" src="{{logout_button_path}}"></img>

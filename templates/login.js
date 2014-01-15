@@ -26,6 +26,7 @@ window.fbAsyncInit = function() {
       var loginEvent = document.createEvent('Event');
       loginEvent.initEvent('login', true, true);
       userInfo.dispatchEvent(loginEvent);
+      loader.style.display = "none";
     });
   }
 
