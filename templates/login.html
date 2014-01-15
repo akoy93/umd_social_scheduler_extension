@@ -1,23 +1,26 @@
 {{! Handlebars template for login html }}
 {{! Parameters: login_button_id, logout_button_id, user_div_id, loader_id, }}
 {{! login_button_path, logout_button_path, loader_path, login_info_div_id, }}
-{{! insert_share_button, share_button_path, share_button_id }}
-<br />
-<div id="{{login_info_div_id}}"></div>
-<br />
-<table>
-  <tr>
-    {{#if insert_share_button}}
+{{! insert_share_button, share_button_path, share_button_id, note_id }}
+<center>
+  <br />
+  <div id="{{login_info_div_id}}"></div>
+  <br />
+  <table>
+    <tr>
+      {{#if insert_share_button}}
+        <td>
+          <img style="cursor: hand; display: none;" id="{{share_button_id}}" src="{{share_button_path}}"></img>
+        </td>
+      {{/if}}
       <td>
-        <img style="cursor: hand;" id="{{share_button_id}}" src="{{share_button_path}}"></img>
+        <img style="cursor: hand; display: none;" id="{{login_button_id}}" src="{{login_button_path}}" width="175"></img>
+        <img style="cursor: hand; display: none;" id="{{logout_button_id}}" src="{{logout_button_path}}"></img>
       </td>
-    {{/if}}
-    <td>
-      <img style="cursor: hand; display: none;" id="{{login_button_id}}" src="{{login_button_path}}" width="175"></img>
-      <img style="cursor: hand; display: none;" id="{{logout_button_id}}" src="{{logout_button_path}}"></img>
-    </td>
-  </tr>
-</table>
-<img id="{{loader_id}}" style="padding-top: 20px; display: block;" src="{{loader_path}}" width="25"></img>
-<br />
-<div style="display: none;" id="{{user_div_id}}"></div>
+    </tr>
+  </table>
+  <p style="display: none;" id="{{note_id}}"><b>Note on Permissions:</b> In order to share your schedule, you must grant UMD Social Scheduler permission to post on Facebook for you.</p>
+  <img id="{{loader_id}}" style="padding-top: 20px; display: block;" src="{{loader_path}}" width="25"></img>
+  <br />
+  <div style="display: none;" id="{{user_div_id}}"></div>
+</center>

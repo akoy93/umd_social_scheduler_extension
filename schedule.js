@@ -9,7 +9,7 @@ $(document).ready(function() {
   var scheduleHTML = $(SCHEDULE_PATH).html();
   if (/login\swith\suniversity\sdirectory\slogin/i.test(scheduleHTML)) { return; }
 
-  renderLoginTemplate(SCHEDULE_PATH, true);
+  renderLoginTemplate(SCHEDULE_PATH, "after", true);
   handleLoginLogoutEvents();
 
   var classCodes = [];

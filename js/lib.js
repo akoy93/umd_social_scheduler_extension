@@ -11,6 +11,7 @@ var SHARE_BUTTON_ID = "share-button";
 var SHARE_BUTTON_PATH = chrome.extension.getURL('images/facebook-share-icon.gif');
 var USER_INFO_DIV_ID = "user-info";
 var LOGIN_INFO_DIV_ID = "login-info";
+var NOTE_ID = "permissions-note";
 var FBID = null;
 var NAME = null;
 var ACCESS_TOKEN = null;
@@ -56,15 +57,15 @@ function injectScript(scriptName, node) {
 
 // accepts a jQuery selector to specify where to insert the login template
 // inserts the script with login logic at the end of the body
-function renderLoginTemplate(selector, insertShareButton) {
+function renderLoginTemplate(selector, position, insertShareButton) {
   var loginParams = { login_button_id: LOGIN_BUTTON_ID, logout_button_id: LOGOUT_BUTTON_ID, 
     user_div_id: USER_INFO_DIV_ID, loader_id: LOADER_ID, login_button_path: LOGIN_BUTTON_PATH,
     logout_button_path: LOGOUT_BUTTON_PATH, loader_path: LOADER_PATH, 
     login_info_div_id: LOGIN_INFO_DIV_ID, insert_share_button: insertShareButton,
-    share_button_id: SHARE_BUTTON_ID, share_button_path: SHARE_BUTTON_PATH };
+    share_button_id: SHARE_BUTTON_ID, share_button_path: SHARE_BUTTON_PATH, note_id: NOTE_ID };
 
   // insert login template
-  $(selector).after('<div id="' + LOGIN_DIV_ID + '"></div>');
+  $(selector)[position]('<div id="' + LOGIN_DIV_ID + '"></div>');
   $("#" + LOGIN_DIV_ID).html(renderHandlebars(LOGIN_TEMPLATE, loginParams));
 
   // insert login script
