@@ -1,0 +1,34 @@
+{
+  "name": "UMD Social Scheduler",
+  "version": "1.3.0",
+  "manifest_version": 2,
+  "background": {
+  "scripts": ["background.js"]
+  },
+  "content_scripts": [ {
+  "matches": ["https://www.sis.umd.edu/testudo/studentSched*"],
+  "js": ["js/jquery-2.0.3.min.js", "js/handlebars-v1.3.0.js", "js/lib.js", "schedule.js"]
+  }
+  ],
+  "description": "Link your Facebook account to the UMD scheduling site, post your schedule to Facebook with one click, and see who's in your classes!",
+  "icons": { "48": "images/icon48.jpg",
+          "128": "images/icon128.jpg" },
+  "permissions": [
+     "tabs", "https://www.sis.umd.edu/testudo/studentSched*", "http://www.texts4terps.com/"
+  ],
+  "web_accessible_resources": [
+    "images/friend_icon.png",
+    "images/facebook-share-icon.gif",
+    "images/fb-connect-button.png",
+    "images/fb-logout-button.png",
+    "images/schedule-icon.png",
+    "images/loader.gif",
+    "css/tooltip.css",
+    "templates/login.html",
+    "js/handlebars-v1.3.0.js",
+    "js/lib.js",
+    "js/jquery-2.0.3.min.js",
+    "js/jquery-2.0.3.min.map",
+    "js/login.js",
+  ]
+}
