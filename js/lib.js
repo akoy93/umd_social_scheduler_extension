@@ -72,7 +72,7 @@ function renderLoginTemplate(selector) {
 }
 
 // adds event listeners for login and logout events
-function handleLoginLogout() {
+function handleLoginLogoutEvents() {
   // activates when user has logged out
   $("#" + USER_INFO_DIV_ID).on("logout", function() {
     FBID = null; NAME = null; ACCESS_TOKEN = null;
@@ -91,7 +91,10 @@ function handleLoginLogout() {
     $("#" + LOGIN_INFO_DIV_ID).html(renderHandlebars(USER_INFO_TEMPLATE, params));
     // create session on server for user
     $.getJSON(API_URL + "access", { access_token: ACCESS_TOKEN }, function(response) {
-      if (!response.success) {
+      if (response.success) {
+        var sessionEvent = $.Event("session");
+        $("#" + USER_INFO_DIV_ID).trigger(sessionEvent);
+      } else {
         alert("Failed Facebook authentication. Try logging out and logging in again.");
       }
     });
