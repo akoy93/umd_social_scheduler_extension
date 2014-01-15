@@ -11,7 +11,6 @@ var USER_INFO_DIV_ID = "user-info";
 var FBID = null;
 var NAME = null;
 var ACCESS_TOKEN = null;
-var IS_LOGGED_IN = false;
 
 // this function renders a template with handlebars js
 function renderHandlebars(templateName, templateData) {
@@ -21,7 +20,7 @@ function renderHandlebars(templateName, templateData) {
 
   if (!renderHandlebars.cache[templateName]) {
     var templateDir = chrome.extension.getURL('templates/');
-    var templateUrl = templateDir + templateName + '.html';
+    var templateUrl = templateDir + templateName;
 
     var templateString;
     $.ajax({
@@ -54,7 +53,13 @@ function renderLoginTemplate(selector) {
     user_div_id: USER_INFO_DIV_ID, loader_id: LOADER_ID, login_button_path: LOGIN_BUTTON_PATH,
     logout_button_path: LOGOUT_BUTTON_PATH, loader_path: LOADER_PATH };
 
+  // insert login template
   $(selector).append('<div id="' + LOGIN_DIV_ID + '"></div>');
-  $("#" + LOGIN_DIV_ID).html(renderHandlebars("login", loginParams));
-  $("body").append(renderHandlebars("login_js", loginParams));
+  $("#" + LOGIN_DIV_ID).html(renderHandlebars("login.html", loginParams));
+
+  // insert login script
+  var loginScript = document.createElement("script");
+  loginScript.type = "text/javascript";
+  loginScript.innerHTML = renderHandlebars("login.js", loginParams);
+  document.head.appendChild(loginScript);
 }

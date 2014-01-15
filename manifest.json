@@ -25,10 +25,10 @@
     "images/loader.gif",
     "css/tooltip.css",
     "templates/login.html",
+    "templates/login.js",
     "js/handlebars-v1.3.0.js",
     "js/lib.js",
     "js/jquery-2.0.3.min.js",
-    "js/jquery-2.0.3.min.map",
-    "js/login.js",
+    "js/jquery-2.0.3.min.map"
   ]
 }
