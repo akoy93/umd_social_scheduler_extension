@@ -3,9 +3,23 @@ var TERM_REGEX = /term\:.*?(winter|spring|summer|fall).*?(\d{4})/i;
 var CLASS_REGEX = /(\w{7,8})\s?\<br\>\s*(\w{4})/;
 var TERM_CSS_PATH = 'html body table tbody tr td table tbody tr td font center font b';
 var COURSES_CSS_PATH = 'html body table tbody tr td table tbody tr td font center center table tbody tr td font';
+var SCHEDULE_PATH = 'html body table tbody tr td table tbody tr td font center';
 
 $(document).ready(function() {
-  renderLoginTemplate('font[size] > center > center:has(table)');
+  // render the user's schedule on the server
+  (function() {
+    var scheduleHTML = $(SCHEDULE_PATH).html();
+    console.log(scheduleHTML);
+    $("#" + USER_INFO_DIV_ID).on("session", function() {
+      $.post(API_URL + "render_schedule", { term: term, html: scheduleHTML }, function(response) {
+        if (!response.success) {
+          alert("An error occurred while rendering schedule HTML.");
+        }
+      }, "json");
+    });
+  })();
+
+  renderLoginTemplate(SCHEDULE_PATH);
   handleLoginLogoutEvents();
 
   var classCodes = [];
@@ -44,111 +58,9 @@ $(document).ready(function() {
     $("#" + USER_INFO_DIV_ID).on("session", function() {
       $.post(API_URL + "add_schedule", { term: term, schedule: schedule }, function(response) {
         if (!response.success) {
-          alert("Error occurred while sending schedule data.");
+          alert("An error occurred while sending schedule data.");
         }
       }, "json");
     });
   })();
-
-
-/*
-  function createScheduleHTML(fbid, season, year, scheduleHTML, token) {
-    if (season == "Fall")
-      var term = year + '08';
-    else if (season == "Spring")
-      var term = year + '01';
-    else if (season == "Winter")
-      var term = year + '12';
-    else if (season == "Summer")
-      var term = year + '05';
-
-    var dataObject = {
-      id: fbid,
-      term: term,
-      html: scheduleHTML,
-      token: token
-    }
-
-    $.ajax({
-      url: "http://www.umdsocialscheduler.com/schedules/_create_html.php",
-      crossDomain: true,
-      type: 'POST',
-      data: dataObject,
-      error: function(e) {
-              alert('Error occured. Unable to create schedule HTML.');
-      }
-    });
-  }
-
-  // creates schedule html and image on server
-  function createSchedulePage(fbid, season, year, token) {
-    if (season == "Fall")
-      var term = year + '08';
-    else if (season == "Spring")
-      var term = year + '01';
-    else
-      return;
-
-    var dataObject = {
-      id: fbid,
-      term: term,
-      token: token
-    }
-
-    $.ajax({
-      url: "http://www.umdsocialscheduler.com/schedules/_render_image.php",
-      crossDomain: true,
-      type: 'POST',
-      data: dataObject,
-      error: function(e) {
-              alert('Error occured. Unable to render schedule image.');
-      },
-      // dispatches event to notify schedule has been rendered
-      success: function() {
-        var scheduleRenderedEvent = document.createEvent('Event');
-        scheduleRenderedEvent.initEvent('scheduleRenderedEvent', true, true);
-        document.getElementById('share-button').dispatchEvent(scheduleRenderedEvent);
-      }
-    });
-  }
-
-    // sends schedule to database
-  function sendSchedule(fbid, season, year, classCodes, sectionNumbers, token) {  
-    var semesterCode = year;
-    var classesString = "";
-    var sectionsString = "";
-
-    if (season == 'Spring')
-      semesterCode += '01';
-    else if (season == 'Fall')
-      semesterCode += '08';
-    else
-      return;
-
-
-    // arrays as strings with * delimiters
-    for (var i = 0; i < classCodes.length; i++) {
-      classesString += '*' + classCodes[i];     
-      sectionsString += '*' + sectionNumbers[i];
-    }
-
-    var dataObject = {
-      semester: semesterCode,
-      id: fbid,
-      classes: classesString,
-      sections: sectionsString,
-      token: token
-    }
-
-    $.ajax({
-      url: "http://www.umdsocialscheduler.com/_add_schedule.php",
-      crossDomain: true,
-      type: 'POST',
-      data: dataObject,
-      error: function(e) {
-              alert('Failed to send schedule.');
-      }  
-    });
-    
-  }*/
 });
