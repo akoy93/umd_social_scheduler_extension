@@ -7,6 +7,8 @@ var SCHEDULE_PATH = 'html body table tbody tr td table tbody tr td font center';
 
 $(document).ready(function() {
   var scheduleHTML = $(SCHEDULE_PATH).html();
+  if (/login\swith\suniversity\sdirectory\slogin/i.test(scheduleHTML)) { return; }
+
   renderLoginTemplate(SCHEDULE_PATH, true);
   handleLoginLogoutEvents();
 
@@ -56,28 +58,26 @@ $(document).ready(function() {
   (function() {
     $("#" + USER_INFO_DIV_ID).on("session", function() {
       $.post(API_URL + "render_schedule", { term: term, html: scheduleHTML }, function(response) {
-        // successfully rendered schedule: show share button
+        // successfully rendered schedule: set click listener on share button
         if (response.success) {
-          $("#" + SHARE_BUTTON_ID).show();
+          $("#" + SHARE_BUTTON_ID).click(function() {
+            $("#" + LOADER_ID).show();
+            // submit request to server to post student schedule
+            $.getJSON(API_URL + "post_schedule", function(response) {
+              $("#" + LOADER_ID).hide();
+              if (response.success) {
+                alert("Your schedule has been posted on Facebook!" 
+                  + " Check your UMD Social Scheduler album!");
+              } else {
+                alert("Unable to post your schedule. Make sure you have allowed"
+                  + " UMD Social Scheduler to post to Facebook on your behalf (re-login to allow).");
+              }
+            });
+          });
         } else {
           alert("An error occurred while rendering schedule HTML.");
         }
       }, "json");
-    });
-  })();
-
-  // set click listener for posting a schedule on facebook
-  (function() {
-    $("#" + SHARE_BUTTON_ID).click(function() {
-      $.getJSON(API_URL + "post_schedule", function(response) {
-        if (response.success) {
-          alert("Your schedule has been posted on Facebook!" 
-            + " Check your UMD Social Scheduler album!");
-        } else {
-          alert("Unable to post your schedule. Make sure you have allowed"
-            + " UMD Social Scheduler to post to Facebook on your behalf (re-login to allow).");
-        }
-      });
     });
   })();
 });
