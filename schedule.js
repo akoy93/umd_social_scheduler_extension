@@ -95,7 +95,7 @@ $(document).ready(function() {
           // render tab content
           $(selector).first().after(renderHandlebars(TAB_CONTENT_TEMPLATE, 
             { course: course, friends: response.data, partial_id: FRIENDS_ID }));
-          $("#" + course + FRIENDS_ID).tabs();
+          $("#" + course).tabs();
           count();
         }
       };

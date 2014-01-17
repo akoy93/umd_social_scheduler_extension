@@ -1,7 +1,7 @@
 {{! Handlebars template for friends and friends of friends info }}
 {{! Parameters: friends: { fbid, name, section }, friendsoffriends: { fbid, name, section, num_mutuals }, }}
 {{! template_id, course, section, show_section }}
-<div id="{{course}}{{partial_id}}">
+<div id="{{course}}{{#if section}}{{section}}{{/if}}">
   <ul>
     <li>
       <a href="#{{course}}{{#if show_section}}{{section}}{{/if}}friends">
