@@ -151,3 +151,14 @@ function getFriendsOfFriends(callback, term, course, section) {
   $.getJSON(API_URL + "friendsoffriends", { term: term, course: course, section: section }, 
     callback);
 }
+
+// creates a countdown latch that's used for waiting for asynchronous calls
+function countdownLatch(target, callback) {
+  this.count = 0;
+  return function() {
+    this.count += 1;
+    if (this.count >= target) {
+      callback();
+    }
+  };
+}

@@ -86,18 +86,17 @@ $(document).ready(function() {
   // display friends and friends of friends data to the user
   $("#" + USER_INFO_DIV_ID).on("session", function() {
     $("#" + LOADER_ID).show();
-    var createCallback = function(course) {
+    var createCallback = function(course, count) {
       return function(response) {
         if (response.success) {
-          $("#" + LOADER_ID).hide();
           var selector = "#" + SCHEDULE_FRIENDS_ID + " ul";
           // render tab
-          $(selector).first().append(renderHandlebars(TAB_TEMPLATE, { course: course }));
+          $(selector).first().prepend(renderHandlebars(TAB_TEMPLATE, { course: course }));
           // render tab content
           $(selector).first().after(renderHandlebars(TAB_CONTENT_TEMPLATE, 
             { course: course, friends: response.data, partial_id: FRIENDS_ID }));
-           $("#" + SCHEDULE_FRIENDS_ID).tabs();
-           //$("#" + course + FRIENDS_ID).tabs();
+          $("#" + course + FRIENDS_ID).tabs();
+          count();
         }
       };
     };
@@ -105,10 +104,15 @@ $(document).ready(function() {
     // insert schedule friends skeleton
     $("#" + LOADER_ID).after(renderHandlebars(SCHEDULE_FRIENDS_TEMPLATE, 
       { template_id: SCHEDULE_FRIENDS_ID}));
-    var renderingData = { show_section: false, }
+
     // get user's friends in each class
     for (var i = 0; i < classCodes.length; i++) {
-      getFriends(createCallback(classCodes[i]), term, classCodes[i]);
+      getFriends(createCallback(classCodes[i], countdownLatch(classCodes.length, 
+        function() { 
+          $("#" + SCHEDULE_FRIENDS_ID).tabs({ active: 0 });
+          $("#" + SCHEDULE_FRIENDS_ID).show();
+          $("#" + LOADER_ID).hide();
+        })), term, classCodes[i]);
     }
   });
 });

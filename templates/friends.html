@@ -5,12 +5,12 @@
   <ul>
     <li>
       <a href="#{{course}}{{#if show_section}}{{section}}{{/if}}friends">
-        <span>Friends in {{course}}{{appendSec show_section section}}</span>
+        <span>Friends{{#if show_section}} in {{course}}{{appendSec show_section section}}{{/if}}</span>
       </a>
     </li>
     <li>
       <a href="#{{course}}{{#if show_section}}{{section}}{{/if}}friendsoffriends">
-        <span>Friends of Friends in {{course}}{{appendSec show_section section}}</span>
+        <span>People You May Know{{#if show_section}} in {{course}}{{appendSec show_section section}}{{/if}}</span>
       </a>
     </li>
   </ul>
@@ -25,7 +25,7 @@
   <div id="{{course}}{{#if show_section}}{{section}}{{/if}}friendsoffriends">
     {{#each friendsoffriends}}
       <center>
-        <p><a href="http://www.facebook.com/{{fbid}}">{{name}}</a> <img src="https://graph.facebook.com/{{fbid}}/picture"></img> {{#unless show_section}}(Sec. {{section}}){{/}} ({{num_mutuals}} Mutual Friend(s))</p>
+        <p><a href="http://www.facebook.com/{{fbid}}">{{name}}</a> <img src="https://graph.facebook.com/{{fbid}}/picture"></img> {{#unless show_section}}(Sec. {{section}}){{/unless}} ({{num_mutuals}} Mutual Friend(s))</p>
       </center>
     {{/each}}
   </div>

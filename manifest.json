@@ -8,8 +8,8 @@
   "content_scripts": [ 
     {
       "matches": ["*://www.sis.umd.edu/testudo/studentSched*", "*://sis.umd.edu/testudo/studentSched*"],
-      "css": ["css/jquery-ui-1.10.3.custom.min.css"],
-      "js": ["js/jquery-2.0.3.min.js", "js/jquery-ui-1.10.3.custom.min.js", "js/handlebars-v1.3.0.js", "js/lib.js", "schedule.js"] 
+      "css": ["css/jquery-ui-1.10.4.custom.min.css"],
+      "js": ["js/jquery-2.0.3.min.js", "js/jquery-ui-1.10.4.custom.min.js", "js/handlebars-v1.3.0.js", "js/lib.js", "schedule.js"] 
     }, {
       "matches": ["*://www.ntst.umd.edu/soc/*", "*://ntst.umd.edu/soc/*"],
       "js": ["js/jquery-2.0.3.min.js", "js/handlebars-v1.3.0.js", "js/lib.js", "courses.js"] 
@@ -28,7 +28,7 @@
     "images/fb-logout-button.png",
     "images/schedule-icon.png",
     "images/loader.gif",
-    "css/jquery-ui-1.10.3.custom.min.css",
+    "css/jquery-ui-1.10.4.custom.min.css",
     "templates/login.html",
     "templates/login.js",
     "templates/login_info.html",
@@ -40,6 +40,6 @@
     "js/lib.js",
     "js/jquery-2.0.3.min.js",
     "js/jquery-2.0.3.min.map",
-    "js/jquery-ui-1.10.3.custom.min.js"
+    "js/jquery-ui-1.10.4.custom.min.js"
   ]
 }
