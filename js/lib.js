@@ -1,6 +1,6 @@
 // store general session information
-var API_URL = "http://www.texts4terps.com/";
-var LOGIN_DIV_ID = "login-template";
+var API_URL = "http://www.texts4terps.com/"; // domain name for api
+var LOGIN_DIV_ID = "login-template"; // id of div containing the login template
 var LOGIN_BUTTON_ID = "login-button";
 var LOGIN_BUTTON_PATH = chrome.extension.getURL('images/fb-connect-button.png');
 var LOGOUT_BUTTON_ID = "logout-button";
@@ -9,11 +9,10 @@ var LOADER_ID = "login-loader";
 var LOADER_PATH = chrome.extension.getURL('images/loader.gif');
 var SHARE_BUTTON_ID = "share-button";
 var SHARE_BUTTON_PATH = chrome.extension.getURL('images/facebook-share-icon.gif');
-var USER_INFO_DIV_ID = "user-info";
-var LOGIN_INFO_DIV_ID = "login-info";
-var NOTE_ID = "permissions-note";
+var USER_INFO_DIV_ID = "user-info"; // id of hidden div containing user information
+var LOGIN_INFO_DIV_ID = "login-info"; // id of div displaying user login info
+var NOTE_ID = "permissions-note"; // id of element containing permissions note
 var TEMPLATES_DIR = chrome.extension.getURL('templates/');
-var FRIENDS_PARTIAL_NAME = "friends.html";
 var FBID = null;
 var NAME = null;
 var ACCESS_TOKEN = null;
@@ -22,11 +21,12 @@ var ACCESS_TOKEN = null;
 var LOGIN_TEMPLATE = "login.html";
 var LOGIN_SCRIPT = "login.js";
 var USER_INFO_TEMPLATE = "login_info.html";
-
-// Handlebars helper for selectively converting section numbers to "0000"
-Handlebars.registerHelper('sec', function(showSection, section) {
-  return showSection ? section : "0000";
-});
+var FRIENDS_PARTIAL_NAME = "friends.html";
+var FRIENDS_ID = "friends-tabs";
+var SCHEDULE_FRIENDS_TEMPLATE = "schedule_friends.html";
+var SCHEDULE_FRIENDS_ID = "schedule-friends-tabs";
+var TAB_TEMPLATE = "tab.html";
+var TAB_CONTENT_TEMPLATE = "tab_content.html";
 
 // Handlebars helper for generating section string to append to output
 Handlebars.registerHelper('appendSec', function(showSection, section) {
@@ -44,6 +44,18 @@ Handlebars.registerHelper('appendSec', function(showSection, section) {
       }
   });
 })();
+
+// this function pings the server to determine if it is running
+function ping() {
+  try {
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", API_URL + "alive", false);
+    xmlHttp.send();
+    return JSON.parse(xmlHttp.responseText).success
+  } catch(err) {
+    return false;
+  }
+}
 
 // this function renders a template with handlebars js
 function renderHandlebars(templateName, templateData) {
@@ -104,6 +116,7 @@ function handleLoginLogoutEvents() {
   $("#" + USER_INFO_DIV_ID).on("logout", function() {
     FBID = null; NAME = null; ACCESS_TOKEN = null;
     $("#" + LOGIN_INFO_DIV_ID).empty();
+    $("#" + SCHEDULE_FRIENDS_ID).empty();
     // clear user's session on server
     $.getJSON(API_URL + "logout");
   });
