@@ -12,6 +12,8 @@ var SHARE_BUTTON_PATH = chrome.extension.getURL('images/facebook-share-icon.gif'
 var USER_INFO_DIV_ID = "user-info";
 var LOGIN_INFO_DIV_ID = "login-info";
 var NOTE_ID = "permissions-note";
+var TEMPLATES_DIR = chrome.extension.getURL('templates/');
+var FRIENDS_PARTIAL_NAME = "friends.html";
 var FBID = null;
 var NAME = null;
 var ACCESS_TOKEN = null;
@@ -21,6 +23,28 @@ var LOGIN_TEMPLATE = "login.html";
 var LOGIN_SCRIPT = "login.js";
 var USER_INFO_TEMPLATE = "login_info.html";
 
+// Handlebars helper for selectively converting section numbers to "0000"
+Handlebars.registerHelper('sec', function(showSection, section) {
+  return showSection ? section : "0000";
+});
+
+// Handlebars helper for generating section string to append to output
+Handlebars.registerHelper('appendSec', function(showSection, section) {
+  return showSection ? ", Sec. " + section : "";
+});
+
+// register friends partial
+(function() { 
+  $.ajax({
+      url: TEMPLATES_DIR + FRIENDS_PARTIAL_NAME,
+      method: 'GET',
+      async: false,
+      success: function(data) {
+        Handlebars.registerPartial('friends', data);
+      }
+  });
+})();
+
 // this function renders a template with handlebars js
 function renderHandlebars(templateName, templateData) {
   if (!renderHandlebars.cache) { 
@@ -28,8 +52,7 @@ function renderHandlebars(templateName, templateData) {
   }
 
   if (!renderHandlebars.cache[templateName]) {
-    var templateDir = chrome.extension.getURL('templates/');
-    var templateUrl = templateDir + templateName;
+    var templateUrl = TEMPLATES_DIR + templateName;
 
     var templateString;
     $.ajax({
@@ -103,4 +126,15 @@ function handleLoginLogoutEvents() {
       }
     });
   });
+}
+
+// invokes the get friends request and sends the response to the given callback
+function getFriends(callback, term, course, section) {
+  $.getJSON(API_URL + "friends", { term: term, course: course, section: section }, callback);
+}
+
+// invokes the get friends of friends request and sends the respone to the given callback
+function getFriendsOfFriends(callback, term, course, section) {
+  $.getJSON(API_URL + "friendsoffriends", { term: term, course: course, section: section }, 
+    callback);
 }

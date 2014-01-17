@@ -1,0 +1,32 @@
+{{! Handlebars template for friends and friends of friends info }}
+{{! Parameters: friends: { fbid, section }, friendsoffriends: { fbid, section, num_mutuals }, }}
+{{! template_id, course, section, show_section }}
+<div id="{{template_id}}">
+  <ul>
+    <li>
+      <a href="#{{course}}{{section}}friends">
+        <span>Friends in {{course}}{{secStr show_section section}}</span>
+      </a>
+    </li>
+    <li>
+      <a href="#{{course}}{{section}}friendsoffriends">
+        <span>Friends of Friends in {{course}}{{secStr show_section section}}</span>
+      </a>
+    </li>
+  </ul>
+  <div id="#{{course}}{{section}}friends">
+    {{#each friends}}
+      <center>
+        <p>{{fbid}} <img src="https://graph.facebook.com/{{fbid}}/picture"></img> {{#if show_section}}(Sec. {{section}}){{/if}}
+        </p>
+      </center>
+    {{/each}}
+  </div>
+  <div id="#{{course}}{{section}}friendsoffriends">
+    {{#each friendsoffriends}}
+      <center>
+        <p>{{fbid}} <img src="https://graph.facebook.com/{{fbid}}/picture"></img> {{#if show_section}}(Sec. {{section}}){{/if}} ({{num_mutuals}} Mutual Friend(s))</p>
+      </center>
+    {{/each}}
+  </div>
+</div>
