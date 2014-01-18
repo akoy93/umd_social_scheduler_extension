@@ -25,7 +25,8 @@ var SESSION_SCRIPT = "session.js";
 var USER_INFO_TEMPLATE = "login_info.html";
 var FRIENDS_PARTIAL_NAME = "friends.html";
 var FRIENDS_ID = "friends-tabs";
-var SCHEDULE_FRIENDS_TEMPLATE = "schedule_friends.html";
+var SCHEDULE_FRIENDS_SKELETON = "schedule_friends.html";
+var SKELETON_ID = "schedule-friends-skeleton";
 var SCHEDULE_FRIENDS_ID = "schedule-friends-tabs";
 var TAB_TEMPLATE = "tab.html";
 var TAB_CONTENT_TEMPLATE = "tab_content.html";
@@ -112,8 +113,8 @@ function renderLoginTemplate(selector, position, insertShareButton) {
   document.head.appendChild(loginScript);
 }
 
-function initializeSessionInPage() {
-  var params = { access_token: ACCESS_TOKEN, api_url: API_URL };
+function manageSessionInPage(newSession) {
+  var params = { access_token: ACCESS_TOKEN, api_url: API_URL, new_session: newSession };
   var sessionScript = document.createElement("script");
   sessionScript.type = "text/javascript";
   sessionScript.innerHTML = renderHandlebars(SESSION_SCRIPT, params);
@@ -124,9 +125,10 @@ function initializeSessionInPage() {
 function handleLoginLogoutEvents() {
   // activates when user has logged out
   $("#" + USER_INFO_DIV_ID).on("logout", function() {
+    manageSessionInPage(false);
     FBID = null; NAME = null; ACCESS_TOKEN = null;
     $("#" + LOGIN_INFO_DIV_ID).empty();
-    $("#" + SCHEDULE_FRIENDS_ID).empty();
+    $("#" + SKELETON_ID).remove();
     // clear user's session on server
     $.getJSON(API_URL + "logout");
   });
@@ -136,7 +138,7 @@ function handleLoginLogoutEvents() {
     // parse user info
     var data = $("#" + USER_INFO_DIV_ID).html().split("|");
     ACCESS_TOKEN = data[0]; FBID = data[1]; NAME = data[2];
-    initializeSessionInPage();
+    manageSessionInPage(true);
     // render login info
     var params = { name: NAME, fbid: FBID };
     $("#" + LOGIN_INFO_DIV_ID).html(renderHandlebars(USER_INFO_TEMPLATE, params));

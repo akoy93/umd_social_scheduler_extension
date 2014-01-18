@@ -104,8 +104,8 @@ $(document).ready(function() {
     };
 
     // insert schedule friends skeleton
-    $("#" + LOADER_ID).after(renderHandlebars(SCHEDULE_FRIENDS_TEMPLATE, 
-      { template_id: SCHEDULE_FRIENDS_ID}));
+    $("#" + LOADER_ID).after(renderHandlebars(SCHEDULE_FRIENDS_SKELETON, 
+      { template_id: SCHEDULE_FRIENDS_ID, skeleton_id: SKELETON_ID }));
 
     // get user's friends in each class
     for (var i = 0; i < classCodes.length; i++) {
