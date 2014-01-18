@@ -94,7 +94,9 @@ $(document).ready(function() {
           $(selector).first().prepend(renderHandlebars(TAB_TEMPLATE, { course: course }));
           // render tab content
           $(selector).first().after(renderHandlebars(TAB_CONTENT_TEMPLATE, 
-            { course: course, friends: response.data, partial_id: FRIENDS_ID }));
+            { course: course, friends: response.data, partial_id: FRIENDS_ID, 
+              schedule_icon_path: SCHEDULE_ICON_PATH, loader_path: LOADER_PATH,
+              term: term, api_url: API_URL }));
           $("#" + course).tabs();
           count();
         }

@@ -9,6 +9,7 @@ var LOADER_ID = "login-loader";
 var LOADER_PATH = chrome.extension.getURL('images/loader.gif');
 var SHARE_BUTTON_ID = "share-button";
 var SHARE_BUTTON_PATH = chrome.extension.getURL('images/facebook-share-icon.gif');
+var SCHEDULE_ICON_PATH = chrome.extension.getURL('images/schedule-icon.png');
 var USER_INFO_DIV_ID = "user-info"; // id of hidden div containing user information
 var LOGIN_INFO_DIV_ID = "login-info"; // id of div displaying user login info
 var NOTE_ID = "permissions-note"; // id of element containing permissions note
@@ -20,6 +21,7 @@ var ACCESS_TOKEN = null;
 // template names
 var LOGIN_TEMPLATE = "login.html";
 var LOGIN_SCRIPT = "login.js";
+var SESSION_SCRIPT = "session.js";
 var USER_INFO_TEMPLATE = "login_info.html";
 var FRIENDS_PARTIAL_NAME = "friends.html";
 var FRIENDS_ID = "friends-tabs";
@@ -110,6 +112,14 @@ function renderLoginTemplate(selector, position, insertShareButton) {
   document.head.appendChild(loginScript);
 }
 
+function initializeSessionInPage() {
+  var params = { access_token: ACCESS_TOKEN, api_url: API_URL };
+  var sessionScript = document.createElement("script");
+  sessionScript.type = "text/javascript";
+  sessionScript.innerHTML = renderHandlebars(SESSION_SCRIPT, params);
+  document.head.appendChild(sessionScript);
+}
+
 // adds event listeners for login and logout events
 function handleLoginLogoutEvents() {
   // activates when user has logged out
@@ -126,6 +136,7 @@ function handleLoginLogoutEvents() {
     // parse user info
     var data = $("#" + USER_INFO_DIV_ID).html().split("|");
     ACCESS_TOKEN = data[0]; FBID = data[1]; NAME = data[2];
+    initializeSessionInPage();
     // render login info
     var params = { name: NAME, fbid: FBID };
     $("#" + LOGIN_INFO_DIV_ID).html(renderHandlebars(USER_INFO_TEMPLATE, params));
