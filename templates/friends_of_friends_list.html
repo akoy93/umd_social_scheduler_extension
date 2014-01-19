@@ -1,0 +1,5 @@
+{{! Handlebars template for friends of friends list }}
+{{! Parameters: friends_of_friends: { fbid, name, section, num_mutuals }, show_section }}
+{{#each friends_of_friends}}
+  <p><img src="https://graph.facebook.com/{{fbid}}/picture"></img> <a href="http://www.facebook.com/{{fbid}}">{{name}}</a> (<b>{{num_mutuals}}</b> Mutual Friend(s)) {{#if ../show_section}} - Sec. {{section}}{{/if}} </p>
+{{/each}}

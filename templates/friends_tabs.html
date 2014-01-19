@@ -1,0 +1,22 @@
+{{! Handlebars template for friends and friends of friends tabs }}
+{{! Parameters: course, section, show_section, loader_path }}
+<div id="{{course}}{{#if section}}{{section}}{{/if}}">
+  <ul>
+    <li>
+      <a href="#{{course}}{{#if show_section}}{{section}}{{/if}}friends">
+        <span>Friends{{#if show_section}} in {{course}}{{appendSec show_section section}}{{/if}}</span>
+      </a>
+    </li>
+    <li>
+      <a href="#{{course}}{{#if show_section}}{{section}}{{/if}}friendsoffriends">
+        <span>People You May Know{{#if show_section}} in {{course}}{{appendSec show_section section}}{{/if}}</span>
+      </a>
+    </li>
+  </ul>
+  <div id="{{course}}{{#if show_section}}{{section}}{{/if}}friends">
+    <img src="{{#if loader_path}}{{loader_path}}{{else}}{{../loader_path}}{{/if}}"></img>
+  </div>
+  <div id="{{course}}{{#if show_section}}{{section}}{{/if}}friendsoffriends">
+    <img src="{{#if loader_path}}{{loader_path}}{{else}}{{../loader_path}}{{/if}}"></img>
+  </div>
+</div>

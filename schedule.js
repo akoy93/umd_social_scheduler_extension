@@ -86,35 +86,38 @@ $(document).ready(function() {
   // display friends and friends of friends data to the user
   $("#" + USER_INFO_DIV_ID).on("session", function() {
     $("#" + LOADER_ID).show();
-    var createCallback = function(course, count) {
+    var friendsCallback = function(course) {
       return function(response) {
-        if (response.success) {
-          var selector = "#" + SCHEDULE_FRIENDS_ID + " ul";
-          // render tab
-          $(selector).first().prepend(renderHandlebars(TAB_TEMPLATE, { course: course }));
-          // render tab content
-          $(selector).first().after(renderHandlebars(TAB_CONTENT_TEMPLATE, 
-            { course: course, friends: response.data, partial_id: FRIENDS_ID, 
-              schedule_icon_path: SCHEDULE_ICON_PATH, loader_path: LOADER_PATH,
-              term: term, api_url: API_URL }));
-          $("#" + course).tabs();
-          count();
-        }
+        var params = { api_url: API_URL, course: course, term: term,
+          schedule_icon_path: SCHEDULE_ICON_PATH, friends: response.data, show_section: true };
+        var selector = "#" + course + "friends";
+        $(selector).html(renderHandlebars(FRIENDS_LIST_TEMPLATE, params));
+      };
+    };
+
+    var friendsOfFriendsCallback = function(course) {
+      return function(response) {
+        var params = { friends_of_friends: response.data, show_section: true };
+        var selector = "#" + course + "friendsoffriends";
+        $(selector).html(renderHandlebars(FRIENDS_OF_FRIENDS_LIST_TEMPLATE, params));
       };
     };
 
     // insert schedule friends skeleton
-    $("#" + LOADER_ID).after(renderHandlebars(SCHEDULE_FRIENDS_SKELETON, 
-      { template_id: SCHEDULE_FRIENDS_ID, skeleton_id: SKELETON_ID }));
+    $("#" + LOADER_ID).after(renderHandlebars(SCHEDULE_FRIENDS_TEMPLATE, 
+      { template_id: SCHEDULE_FRIENDS_ID, skeleton_id: SKELETON_ID, 
+        loader_path: LOADER_PATH, courses: classCodes.map(function(classCode) {
+          return { course: classCode };
+        }) }));
+    $("#" + SCHEDULE_FRIENDS_ID).tabs({ active: 0 });
+    $("#" + SCHEDULE_FRIENDS_ID).show();
+    $("#" + LOADER_ID).hide();
 
-    // get user's friends in each class
+    // get user's friends and friends of friends in each class
     for (var i = 0; i < classCodes.length; i++) {
-      getFriends(createCallback(classCodes[i], countdownLatch(classCodes.length, 
-        function() { 
-          $("#" + SCHEDULE_FRIENDS_ID).tabs({ active: 0 });
-          $("#" + SCHEDULE_FRIENDS_ID).show();
-          $("#" + LOADER_ID).hide();
-        })), term, classCodes[i]);
+      $("#" + classCodes[i]).tabs({ active: 0 });
+      getFriends(friendsCallback(classCodes[i]), term, classCodes[i]);
+      getFriendsOfFriends(friendsOfFriendsCallback(classCodes[i]), term, classCodes[i]);
     }
   });
 });

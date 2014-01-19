@@ -6,12 +6,13 @@ var LOGIN_BUTTON_PATH = chrome.extension.getURL('images/fb-connect-button.png');
 var LOGOUT_BUTTON_ID = "logout-button";
 var LOGOUT_BUTTON_PATH = chrome.extension.getURL('images/fb-logout-button.png');
 var LOADER_ID = "login-loader";
-var LOADER_PATH = chrome.extension.getURL('images/loader.gif');
+var LOADER_PATH = chrome.extension.getURL('images/loading.gif');
 var SHARE_BUTTON_ID = "share-button";
 var SHARE_BUTTON_PATH = chrome.extension.getURL('images/facebook-share-icon.gif');
 var SCHEDULE_ICON_PATH = chrome.extension.getURL('images/schedule-icon.png');
 var USER_INFO_DIV_ID = "user-info"; // id of hidden div containing user information
 var LOGIN_INFO_DIV_ID = "login-info"; // id of div displaying user login info
+var CHECKBOX_ID = "share-permission";
 var NOTE_ID = "permissions-note"; // id of element containing permissions note
 var TEMPLATES_DIR = chrome.extension.getURL('templates/');
 var FBID = null;
@@ -23,13 +24,13 @@ var LOGIN_TEMPLATE = "login.html";
 var LOGIN_SCRIPT = "login.js";
 var SESSION_SCRIPT = "session.js";
 var USER_INFO_TEMPLATE = "login_info.html";
-var FRIENDS_PARTIAL_NAME = "friends.html";
-var FRIENDS_ID = "friends-tabs";
-var SCHEDULE_FRIENDS_SKELETON = "schedule_friends.html";
+var FRIENDS_TABS_TEMPLATE = "friends_tabs.html";
+var FRIENDS_TABS_ID = "friends-tabs";
+var SCHEDULE_FRIENDS_TEMPLATE = "schedule_tabs.html";
 var SKELETON_ID = "schedule-friends-skeleton";
 var SCHEDULE_FRIENDS_ID = "schedule-friends-tabs";
-var TAB_TEMPLATE = "tab.html";
-var TAB_CONTENT_TEMPLATE = "tab_content.html";
+var FRIENDS_LIST_TEMPLATE = "friends_list.html";
+var FRIENDS_OF_FRIENDS_LIST_TEMPLATE = "friends_of_friends_list.html";
 
 // Handlebars helper for generating section string to append to output
 Handlebars.registerHelper('appendSec', function(showSection, section) {
@@ -39,11 +40,11 @@ Handlebars.registerHelper('appendSec', function(showSection, section) {
 // register friends partial
 (function() { 
   $.ajax({
-      url: TEMPLATES_DIR + FRIENDS_PARTIAL_NAME,
+      url: TEMPLATES_DIR + FRIENDS_TABS_TEMPLATE,
       method: 'GET',
       async: false,
       success: function(data) {
-        Handlebars.registerPartial('friends', data);
+        Handlebars.registerPartial('friends_tabs', data);
       }
   });
 })();
@@ -100,7 +101,8 @@ function renderLoginTemplate(selector, position, insertShareButton) {
     user_div_id: USER_INFO_DIV_ID, loader_id: LOADER_ID, login_button_path: LOGIN_BUTTON_PATH,
     logout_button_path: LOGOUT_BUTTON_PATH, loader_path: LOADER_PATH, 
     login_info_div_id: LOGIN_INFO_DIV_ID, insert_share_button: insertShareButton,
-    share_button_id: SHARE_BUTTON_ID, share_button_path: SHARE_BUTTON_PATH, note_id: NOTE_ID };
+    share_button_id: SHARE_BUTTON_ID, share_button_path: SHARE_BUTTON_PATH, note_id: NOTE_ID,
+    checkbox_id: CHECKBOX_ID };
 
   // insert login template
   $(selector)[position]('<div id="' + LOGIN_DIV_ID + '"></div>');
@@ -113,6 +115,9 @@ function renderLoginTemplate(selector, position, insertShareButton) {
   document.head.appendChild(loginScript);
 }
 
+// injects a script into the current page that either creates or ends a session on
+// the api server. this is necessary if we want to allow users to make api requests
+// from within the page (e.g. opening a friend's schedule image)
 function manageSessionInPage(newSession) {
   var params = { access_token: ACCESS_TOKEN, api_url: API_URL, new_session: newSession };
   var sessionScript = document.createElement("script");
@@ -127,7 +132,7 @@ function handleLoginLogoutEvents() {
   $("#" + USER_INFO_DIV_ID).on("logout", function() {
     manageSessionInPage(false);
     FBID = null; NAME = null; ACCESS_TOKEN = null;
-    $("#" + LOGIN_INFO_DIV_ID).empty();
+    $("#" + LOGIN_INFO_DIV_IDTEMPLATE);
     $("#" + SKELETON_ID).remove();
     // clear user's session on server
     $.getJSON(API_URL + "logout");
