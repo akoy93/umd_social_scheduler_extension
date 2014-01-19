@@ -86,6 +86,8 @@ $(document).ready(function() {
   // display friends and friends of friends data to the user
   $("#" + USER_INFO_DIV_ID).on("session", function() {
     $("#" + LOADER_ID).show();
+
+    // populate corresponding div with friends list
     var friendsCallback = function(course) {
       return function(response) {
         var selector = "#" + course + "friends";
@@ -93,13 +95,15 @@ $(document).ready(function() {
           $(selector).html(renderHandlebars(NO_CONTENT_TEMPLATE, 
             { message: "No friends to display" }));
         } else {
-          var params = { api_url: API_URL, course: course, term: term,
-            schedule_icon_path: SCHEDULE_ICON_PATH, friends: response.data, show_section: true };
+          var params = { api_url: API_URL, course: course, term: term, show_section: true,
+            schedule_icon_path: SCHEDULE_ICON_PATH, friends: response.data, 
+            share_permission: SHARE_PERMISSION };
           $(selector).html(renderHandlebars(FRIENDS_LIST_TEMPLATE, params));
         }
       };
     };
 
+    // populate corresponding div with friends of friends list
     var friendsOfFriendsCallback = function(course) {
       return function(response) {
         var selector = "#" + course + "friendsoffriends";

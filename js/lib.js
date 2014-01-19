@@ -18,7 +18,7 @@ var TEMPLATES_DIR = chrome.extension.getURL('templates/');
 var FBID = null;
 var NAME = null;
 var ACCESS_TOKEN = null;
-var VIEW_PERMISSIONS = null;
+var SHARE_PERMISSION = null;
 
 // template names
 var LOGIN_TEMPLATE = "login.html";
@@ -157,6 +157,7 @@ function handleLoginLogoutEvents() {
     // create session on server for user
     $.getJSON(API_URL + "access", { access_token: ACCESS_TOKEN }, function(response) {
       if (response.success) {
+        SHARE_PERMISSION = response.data.share;
         var sessionEvent = $.Event("session");
         $("#" + USER_INFO_DIV_ID).trigger(sessionEvent);
       } else {
