@@ -88,25 +88,35 @@ $(document).ready(function() {
     $("#" + LOADER_ID).show();
     var friendsCallback = function(course) {
       return function(response) {
-        var params = { api_url: API_URL, course: course, term: term,
-          schedule_icon_path: SCHEDULE_ICON_PATH, friends: response.data, show_section: true };
         var selector = "#" + course + "friends";
-        $(selector).html(renderHandlebars(FRIENDS_LIST_TEMPLATE, params));
+        if (response.data.length <= 0) {
+          $(selector).html(renderHandlebars(NO_CONTENT_TEMPLATE, 
+            { message: "No friends to display" }));
+        } else {
+          var params = { api_url: API_URL, course: course, term: term,
+            schedule_icon_path: SCHEDULE_ICON_PATH, friends: response.data, show_section: true };
+          $(selector).html(renderHandlebars(FRIENDS_LIST_TEMPLATE, params));
+        }
       };
     };
 
     var friendsOfFriendsCallback = function(course) {
       return function(response) {
-        var params = { friends_of_friends: response.data, show_section: true };
         var selector = "#" + course + "friendsoffriends";
-        $(selector).html(renderHandlebars(FRIENDS_OF_FRIENDS_LIST_TEMPLATE, params));
+        if (response.data.length <= 0) {
+          $(selector).html(renderHandlebars(NO_CONTENT_TEMPLATE,
+            { message: "No suggestions to make" }));
+        } else {
+          var params = { friends_of_friends: response.data, show_section: true };
+          $(selector).html(renderHandlebars(FRIENDS_OF_FRIENDS_LIST_TEMPLATE, params));
+        }
       };
     };
 
     // insert schedule friends skeleton
     $("#" + LOADER_ID).after(renderHandlebars(SCHEDULE_FRIENDS_TEMPLATE, 
       { template_id: SCHEDULE_FRIENDS_ID, skeleton_id: SKELETON_ID, 
-        loader_path: LOADER_PATH, courses: classCodes.map(function(classCode) {
+        courses: classCodes.map(function(classCode) {
           return { course: classCode };
         }) }));
     $("#" + SCHEDULE_FRIENDS_ID).tabs({ active: 0 });

@@ -18,6 +18,7 @@ var TEMPLATES_DIR = chrome.extension.getURL('templates/');
 var FBID = null;
 var NAME = null;
 var ACCESS_TOKEN = null;
+var VIEW_PERMISSIONS = null;
 
 // template names
 var LOGIN_TEMPLATE = "login.html";
@@ -31,10 +32,16 @@ var SKELETON_ID = "schedule-friends-skeleton";
 var SCHEDULE_FRIENDS_ID = "schedule-friends-tabs";
 var FRIENDS_LIST_TEMPLATE = "friends_list.html";
 var FRIENDS_OF_FRIENDS_LIST_TEMPLATE = "friends_of_friends_list.html";
+var NO_CONTENT_TEMPLATE = "no_content.html";
 
 // Handlebars helper for generating section string to append to output
 Handlebars.registerHelper('appendSec', function(showSection, section) {
   return showSection ? ", Sec. " + section : "";
+});
+
+// Handlebars helper for getting loader_path (workaround because we use friends_tabs as a partial)
+Handlebars.registerHelper('loader_path', function() {
+  return LOADER_PATH;
 });
 
 // register friends partial
