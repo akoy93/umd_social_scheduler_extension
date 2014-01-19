@@ -12,13 +12,13 @@ var SHARE_BUTTON_PATH = chrome.extension.getURL('images/facebook-share-icon.gif'
 var SCHEDULE_ICON_PATH = chrome.extension.getURL('images/schedule-icon.png');
 var USER_INFO_DIV_ID = "user-info"; // id of hidden div containing user information
 var LOGIN_INFO_DIV_ID = "login-info"; // id of div displaying user login info
+var CHECKBOX_DIV_ID = "checkbox-div";
 var CHECKBOX_ID = "share-permission";
 var NOTE_ID = "permissions-note"; // id of element containing permissions note
 var TEMPLATES_DIR = chrome.extension.getURL('templates/');
 var FBID = null;
 var NAME = null;
 var ACCESS_TOKEN = null;
-var SHARE_PERMISSION = null;
 
 // template names
 var LOGIN_TEMPLATE = "login.html";
@@ -93,23 +93,15 @@ function renderHandlebars(templateName, templateData) {
   return renderHandlebars.cache[templateName](templateData);
 }
 
-// this function appends a javascript file to the end of a node in the dom
-function injectScript(scriptName, node) {
-  var toInject = document.createElement("script");
-  toInject.type = "text/javascript";
-  toInject.src = chrome.extension.getURL('js/') + scriptName + ".js";
-  document[node].appendChild(toInject);
-}
-
 // accepts a jQuery selector to specify where to insert the login template
 // inserts the script with login logic at the end of the body
 function renderLoginTemplate(selector, position, insertShareButton) {
   var loginParams = { login_button_id: LOGIN_BUTTON_ID, logout_button_id: LOGOUT_BUTTON_ID, 
     user_div_id: USER_INFO_DIV_ID, loader_id: LOADER_ID, login_button_path: LOGIN_BUTTON_PATH,
-    logout_button_path: LOGOUT_BUTTON_PATH, loader_path: LOADER_PATH, 
-    login_info_div_id: LOGIN_INFO_DIV_ID, insert_share_button: insertShareButton,
+    logout_button_path: LOGOUT_BUTTON_PATH, loader_path: LOADER_PATH, checkbox_id: CHECKBOX_ID,
+    login_info_div_id: LOGIN_INFO_DIV_ID, insert_share_button: insertShareButton, 
     share_button_id: SHARE_BUTTON_ID, share_button_path: SHARE_BUTTON_PATH, note_id: NOTE_ID,
-    checkbox_id: CHECKBOX_ID };
+    checkbox_div_id: CHECKBOX_DIV_ID };
 
   // insert login template
   $(selector)[position]('<div id="' + LOGIN_DIV_ID + '"></div>');
@@ -122,24 +114,70 @@ function renderLoginTemplate(selector, position, insertShareButton) {
   document.head.appendChild(loginScript);
 }
 
-// injects a script into the current page that either creates or ends a session on
-// the api server. this is necessary if we want to allow users to make api requests
-// from within the page (e.g. opening a friend's schedule image)
-function manageSessionInPage(newSession) {
-  var params = { access_token: ACCESS_TOKEN, api_url: API_URL, new_session: newSession };
-  var sessionScript = document.createElement("script");
-  sessionScript.type = "text/javascript";
-  sessionScript.innerHTML = renderHandlebars(SESSION_SCRIPT, params);
-  document.head.appendChild(sessionScript);
-}
-
 // adds event listeners for login and logout events
 function handleLoginLogoutEvents() {
+  // injects a script into the current page that either creates or ends a session on
+  // the api server. this is necessary if we want to allow users to make api requests
+  // from within the page (e.g. opening a friend's schedule image)
+  var manageSessionInPage = function(newSession) {
+    var params = { access_token: ACCESS_TOKEN, api_url: API_URL, new_session: newSession };
+    var sessionScript = document.createElement("script");
+    sessionScript.type = "text/javascript";
+    sessionScript.innerHTML = renderHandlebars(SESSION_SCRIPT, params);
+    document.head.appendChild(sessionScript);
+  };
+
+  // create a session for the chrome extension by sending the user's access token to the
+  // server. render share permissions checkbox based on response.
+  var createSessionAndHandleResponse = function() {
+    // set checkbox according to user's data on server and add event listener for on
+    // change event to update user's options on server
+    var hookUpCheckbox = function(sharePermission) {
+      // toggle checkbox based on response data
+      if (sharePermission) {
+        $("#" + CHECKBOX_ID).prop('checked', true);
+      } else {
+        $("#" + CHECKBOX_ID).prop('checked', false);
+      }
+
+      // handle user checkbox share permissions
+      $("#" + CHECKBOX_ID).change(function() {
+        if(this.checked) {
+          $.getJSON(API_URL + "enable_sharing", function(response) {
+            if (!response.success) {
+              alert("Failed to update permissions. Please refresh the page and try again.");
+            }
+          });
+        } else {
+          $.getJSON(API_URL + "disable_sharing", function(response) {
+            if (!response.success) {
+              alert("Failed to update permissions. Please refresh the page and try again.");
+            }
+          });
+        }
+      });
+    };
+
+    $.getJSON(API_URL + "access", { access_token: ACCESS_TOKEN }, function(response) {
+      if (response.success) {
+        hookUpCheckbox(response.data.share);
+        $("#" + CHECKBOX_DIV_ID).show();
+        $("#" + LOADER_ID).hide();
+
+        var sessionEvent = $.Event("session");
+        $("#" + USER_INFO_DIV_ID).trigger(sessionEvent);
+      } else {
+        alert("Failed Facebook authentication. Try logging out and logging in again.");
+      }
+    });
+  };
+
   // activates when user has logged out
   $("#" + USER_INFO_DIV_ID).on("logout", function() {
     manageSessionInPage(false);
     FBID = null; NAME = null; ACCESS_TOKEN = null;
-    $("#" + LOGIN_INFO_DIV_IDTEMPLATE);
+    $("#" + LOGIN_INFO_DIV_ID).empty();
+    $("#" + CHECKBOX_DIV_ID).hide();
     $("#" + SKELETON_ID).remove();
     // clear user's session on server
     $.getJSON(API_URL + "logout");
@@ -150,20 +188,13 @@ function handleLoginLogoutEvents() {
     // parse user info
     var data = $("#" + USER_INFO_DIV_ID).html().split("|");
     ACCESS_TOKEN = data[0]; FBID = data[1]; NAME = data[2];
+    // create session on server within current page
     manageSessionInPage(true);
     // render login info
     var params = { name: NAME, fbid: FBID };
     $("#" + LOGIN_INFO_DIV_ID).html(renderHandlebars(USER_INFO_TEMPLATE, params));
-    // create session on server for user
-    $.getJSON(API_URL + "access", { access_token: ACCESS_TOKEN }, function(response) {
-      if (response.success) {
-        SHARE_PERMISSION = response.data.share;
-        var sessionEvent = $.Event("session");
-        $("#" + USER_INFO_DIV_ID).trigger(sessionEvent);
-      } else {
-        alert("Failed Facebook authentication. Try logging out and logging in again.");
-      }
-    });
+    // create session for extension and handle response data
+    createSessionAndHandleResponse();
   });
 }
 
@@ -176,15 +207,4 @@ function getFriends(callback, term, course, section) {
 function getFriendsOfFriends(callback, term, course, section) {
   $.getJSON(API_URL + "friendsoffriends", { term: term, course: course, section: section }, 
     callback);
-}
-
-// creates a countdown latch that's used for waiting for asynchronous calls
-function countdownLatch(target, callback) {
-  this.count = 0;
-  return function() {
-    this.count += 1;
-    if (this.count >= target) {
-      callback();
-    }
-  };
 }
