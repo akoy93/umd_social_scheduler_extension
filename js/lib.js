@@ -14,14 +14,15 @@ var USER_INFO_DIV_ID = "user-info"; // id of hidden div containing user informat
 var LOGIN_INFO_DIV_ID = "login-info"; // id of div displaying user login info
 var CHECKBOX_DIV_ID = "checkbox-div";
 var CHECKBOX_ID = "share-permission";
+var FRIEND_ICON_PATH = chrome.extension.getURL('images/friend_icon.png');
 var NOTE_ID = "permissions-note"; // id of element containing permissions note
-var TEMPLATES_DIR = chrome.extension.getURL('templates/');
 var FBID = null;
 var NAME = null;
 var ACCESS_TOKEN = null;
 var SHARE_PERMISSION = null;
 
 // template names
+var TEMPLATES_DIR = chrome.extension.getURL('templates/');
 var LOGIN_TEMPLATE = "login.html";
 var LOGIN_SCRIPT = "login.js";
 var SESSION_SCRIPT = "session.js";
@@ -33,7 +34,10 @@ var SKELETON_ID = "schedule-friends-skeleton";
 var SCHEDULE_FRIENDS_ID = "schedule-friends-tabs";
 var FRIENDS_LIST_TEMPLATE = "friends_list.html";
 var FRIENDS_OF_FRIENDS_LIST_TEMPLATE = "friends_of_friends_list.html";
+var FRIEND_ICON_TEMPLATE = "friend_icon.html";
 var NO_CONTENT_TEMPLATE = "no_content.html";
+var HIDDEN_DIV_TEMPLATE = "hidden_div.html";
+var FRIEND_COUNT_TEMPLATE = "friend_count.html";
 
 // Handlebars helper for generating section string to append to output
 Handlebars.registerHelper('appendSec', function(showSection, section) {
@@ -200,13 +204,61 @@ function handleLoginLogoutEvents() {
   });
 }
 
-// invokes the get friends request and sends the response to the given callback
-function getFriends(callback, term, course, section) {
+// friends tabs template must have been rendered already
+// invokes the get friends request and sends the response to a generated callback
+// that inserts the data into the correct part of the template
+function getFriends(term, course, section, coursesFunc) {
+  var callback = (function(course, section) {
+    return function(response) {
+      if (!section) { section = ""; }
+      var selector = "#" + course + section + "friends";
+      if (response.data.length <= 0) {
+        if (!coursesFunc) { // then we are on courses page and this is unnecessary
+          $(selector).html(renderHandlebars(NO_CONTENT_TEMPLATE, 
+            { message: "No friends to display" }));
+        }
+      } else {
+        var params = { api_url: API_URL, course: course, term: term, show_section: true,
+          schedule_icon_path: SCHEDULE_ICON_PATH, friends: response.data, 
+          share_permission: SHARE_PERMISSION };
+        $(selector).html(renderHandlebars(FRIENDS_LIST_TEMPLATE, params));
+      }
+      // caller can pass in additional code through an argument
+      if (coursesFunc) { coursesFunc.call(this, response); }
+    };
+  })(course, section);
+
+  // invalid section number
+  if (section === "0000") { section = null; }
+
   $.getJSON(API_URL + "friends", { term: term, course: course, section: section }, callback);
 }
 
-// invokes the get friends of friends request and sends the respone to the given callback
-function getFriendsOfFriends(callback, term, course, section) {
+// friends tabs template must have been rendered already
+// invokes the get friends of friends request and sends the response to a generated callback
+// that inserts the data into the correct part of the template
+function getFriendsOfFriends(term, course, section, coursesFunc) {
+  var callback = (function(course, section) {
+    return function(response) {
+      if (!section) { section = ""; }
+      var selector = "#" + course + section + "friendsoffriends";
+      if (response.data.length <= 0) {
+        if (!coursesFunc) {
+          $(selector).html(renderHandlebars(NO_CONTENT_TEMPLATE,
+            { message: "No suggestions to make" }));
+        }
+      } else {
+        var params = { friends_of_friends: response.data, show_section: true };
+        $(selector).html(renderHandlebars(FRIENDS_OF_FRIENDS_LIST_TEMPLATE, params));
+      }
+      // caller can pass in additional code through an argument
+      if (coursesFunc) { coursesFunc.call(this, response); }
+    };
+  })(course, section);
+
+  // invalid section number
+  if (section === "0000") { section = null; }
+
   $.getJSON(API_URL + "friendsoffriends", { term: term, course: course, section: section }, 
     callback);
 }

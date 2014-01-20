@@ -87,36 +87,6 @@ $(document).ready(function() {
   $("#" + USER_INFO_DIV_ID).on("session", function() {
     $("#" + LOADER_ID).show();
 
-    // populate corresponding div with friends list
-    var friendsCallback = function(course) {
-      return function(response) {
-        var selector = "#" + course + "friends";
-        if (response.data.length <= 0) {
-          $(selector).html(renderHandlebars(NO_CONTENT_TEMPLATE, 
-            { message: "No friends to display" }));
-        } else {
-          var params = { api_url: API_URL, course: course, term: term, show_section: true,
-            schedule_icon_path: SCHEDULE_ICON_PATH, friends: response.data, 
-            share_permission: SHARE_PERMISSION };
-          $(selector).html(renderHandlebars(FRIENDS_LIST_TEMPLATE, params));
-        }
-      };
-    };
-
-    // populate corresponding div with friends of friends list
-    var friendsOfFriendsCallback = function(course) {
-      return function(response) {
-        var selector = "#" + course + "friendsoffriends";
-        if (response.data.length <= 0) {
-          $(selector).html(renderHandlebars(NO_CONTENT_TEMPLATE,
-            { message: "No suggestions to make" }));
-        } else {
-          var params = { friends_of_friends: response.data, show_section: true };
-          $(selector).html(renderHandlebars(FRIENDS_OF_FRIENDS_LIST_TEMPLATE, params));
-        }
-      };
-    };
-
     // insert schedule friends skeleton
     $("#" + LOADER_ID).after(renderHandlebars(SCHEDULE_FRIENDS_TEMPLATE, 
       { template_id: SCHEDULE_FRIENDS_ID, skeleton_id: SKELETON_ID, 
@@ -130,8 +100,8 @@ $(document).ready(function() {
     // get user's friends and friends of friends in each class
     for (var i = 0; i < classCodes.length; i++) {
       $("#" + classCodes[i]).tabs({ active: 0 });
-      getFriends(friendsCallback(classCodes[i]), term, classCodes[i]);
-      getFriendsOfFriends(friendsOfFriendsCallback(classCodes[i]), term, classCodes[i]);
+      getFriends(term, classCodes[i]);
+      getFriendsOfFriends(term, classCodes[i]);
     }
   });
 });
