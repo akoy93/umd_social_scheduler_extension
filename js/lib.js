@@ -19,6 +19,7 @@ var TEMPLATES_DIR = chrome.extension.getURL('templates/');
 var FBID = null;
 var NAME = null;
 var ACCESS_TOKEN = null;
+var SHARE_PERMISSION = null;
 
 // template names
 var LOGIN_TEMPLATE = "login.html";
@@ -132,9 +133,9 @@ function handleLoginLogoutEvents() {
   var createSessionAndHandleResponse = function() {
     // set checkbox according to user's data on server and add event listener for on
     // change event to update user's options on server
-    var hookUpCheckbox = function(sharePermission) {
+    var hookUpCheckbox = function() {
       // toggle checkbox based on response data
-      if (sharePermission) {
+      if (SHARE_PERMISSION) {
         $("#" + CHECKBOX_ID).prop('checked', true);
       } else {
         $("#" + CHECKBOX_ID).prop('checked', false);
@@ -160,7 +161,8 @@ function handleLoginLogoutEvents() {
 
     $.getJSON(API_URL + "access", { access_token: ACCESS_TOKEN }, function(response) {
       if (response.success) {
-        hookUpCheckbox(response.data.share);
+        SHARE_PERMISSION = response.data.share;
+        hookUpCheckbox();
         $("#" + CHECKBOX_DIV_ID).show();
         $("#" + LOADER_ID).hide();
 
@@ -175,7 +177,7 @@ function handleLoginLogoutEvents() {
   // activates when user has logged out
   $("#" + USER_INFO_DIV_ID).on("logout", function() {
     manageSessionInPage(false);
-    FBID = null; NAME = null; ACCESS_TOKEN = null;
+    FBID = null; NAME = null; ACCESS_TOKEN = null; SHARE_PERMISSION = null;
     $("#" + LOGIN_INFO_DIV_ID).empty();
     $("#" + CHECKBOX_DIV_ID).hide();
     $("#" + SKELETON_ID).remove();
