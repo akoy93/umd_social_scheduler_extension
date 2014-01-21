@@ -17,29 +17,43 @@ $(document).ready(function() {
     var courseCode = $(this).html();
     var tooltipContent = renderHandlebars(FRIENDS_TABS_TEMPLATE, 
       { course: courseCode, section: NO_SECTION, show_section: true });
-    $("#" + HIDDEN_DIV_ID).append(tooltipContent);
-    $("#" + courseCode + NO_SECTION).tabs({ active: 0 });
+    $(this).parent().parent().parent().find(".course-info-container").append("<br />" + tooltipContent);
+    $("#" + courseCode + NO_SECTION).hide();
+    $("#" + courseCode + NO_SECTION).tabs({ active: 0});
     $(this).parent().append(renderHandlebars(FRIEND_ICON_TEMPLATE,
       { course: courseCode, section: NO_SECTION, friend_icon_path: FRIEND_ICON_PATH }));
     
     $("#" + USER_INFO_DIV_ID).on("session", function() {
-      getFriends(TERM, courseCode, NO_SECTION, function(response) {
-        var selector = "#" + courseCode + NO_SECTION + "icon";
-        if (response.data.length > 0) {
-         $(selector).show();
-         $(selector).parent().append(renderHandlebars(FRIEND_COUNT_TEMPLATE, 
-           { count: response.data.length, label: "1st Degree" }));
-        }
-      });
+      var callback = function(label) {
+        return function(response) {
+          var selector = "#" + courseCode + NO_SECTION + "icon";
+          if (response.data.length > 0) {
+            var element = $(selector);
+            element.show();
+            element.parent().append(renderHandlebars(FRIEND_COUNT_TEMPLATE, 
+              { count: response.data.length, label: label }));
+            setTooltipEvent(element);
+          }        
+        };
+      };
 
-      getFriendsOfFriends(TERM, courseCode, NO_SECTION, function(response) {
-        var selector = "#" + courseCode + NO_SECTION + "icon";
-        if (response.data.length > 0) {
-         $(selector).show();
-         $(selector).parent().append(renderHandlebars(FRIEND_COUNT_TEMPLATE, 
-           { count: response.data.length, label: "2nd Degree" }));
-        }
-      });
+      getFriends(TERM, courseCode, NO_SECTION, callback("1st Degree"));
+      getFriendsOfFriends(TERM, courseCode, NO_SECTION, callback("2nd Degree"));
     });
   });
+
+  // creates tooltip interactivity with friends icons
+  function setTooltipEvent(element) {
+    element.attr("style", "cursor: pointer;");
+    element.off("click");
+    element.click(function() {
+      if ($(this).attr('state') == "off") {
+        $(this).attr('state', "on");
+        $(element.attr('data-tooltip')).fadeIn(400);
+      } else if ($(this).attr('state') == "on") {
+        $(this).attr('state', "off");
+        $(element.attr('data-tooltip')).fadeOut(200);
+      }
+    });
+  }
 });

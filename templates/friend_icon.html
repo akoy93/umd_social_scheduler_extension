@@ -1,3 +1,3 @@
 {{! Handlebars template for friend icon tooltip }}
 {{! Parameters: friend_icon_path, course, section }}
-<img style="display: none;" src="{{friend_icon_path}}" id="{{course}}{{section}}icon"></img>
+<img style="display: none;" state="off" data-tooltip="#{{course}}{{section}}" src="{{friend_icon_path}}" id="{{course}}{{#if section}}{{section}}{{/if}}icon"></img>

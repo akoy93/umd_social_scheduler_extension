@@ -16,6 +16,7 @@ var CHECKBOX_DIV_ID = "checkbox-div";
 var CHECKBOX_ID = "share-permission";
 var FRIEND_ICON_PATH = chrome.extension.getURL('images/friend_icon.png');
 var NOTE_ID = "permissions-note"; // id of element containing permissions note
+var TOOLTIP_CSS = chrome.extension.getURL('css/tooltip.css');
 var FBID = null;
 var NAME = null;
 var ACCESS_TOKEN = null;
@@ -41,6 +42,7 @@ var FRIEND_COUNT_TEMPLATE = "friend_count.html";
 
 // Handlebars helper for generating section string to append to output
 Handlebars.registerHelper('appendSec', function(showSection, section) {
+  if (section == "0000") { return ""; }
   return showSection ? ", Sec. " + section : "";
 });
 
@@ -213,10 +215,8 @@ function getFriends(term, course, section, coursesFunc) {
       if (!section) { section = ""; }
       var selector = "#" + course + section + "friends";
       if (response.data.length <= 0) {
-        if (!coursesFunc) { // then we are on courses page and this is unnecessary
-          $(selector).html(renderHandlebars(NO_CONTENT_TEMPLATE, 
-            { message: "No friends to display" }));
-        }
+        $(selector).html(renderHandlebars(NO_CONTENT_TEMPLATE, 
+          { message: "No friends to display" }));
       } else {
         var params = { api_url: API_URL, course: course, term: term, show_section: true,
           schedule_icon_path: SCHEDULE_ICON_PATH, friends: response.data, 
@@ -243,10 +243,8 @@ function getFriendsOfFriends(term, course, section, coursesFunc) {
       if (!section) { section = ""; }
       var selector = "#" + course + section + "friendsoffriends";
       if (response.data.length <= 0) {
-        if (!coursesFunc) {
-          $(selector).html(renderHandlebars(NO_CONTENT_TEMPLATE,
-            { message: "No suggestions to make" }));
-        }
+        $(selector).html(renderHandlebars(NO_CONTENT_TEMPLATE,
+          { message: "No suggestions to make" }));
       } else {
         var params = { friends_of_friends: response.data, show_section: true };
         $(selector).html(renderHandlebars(FRIENDS_OF_FRIENDS_LIST_TEMPLATE, params));

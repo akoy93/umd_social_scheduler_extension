@@ -2,6 +2,6 @@
 {{! Parameters: friends: { fbid, name, section }, api_url, term, course, }} 
 {{! schedule_icon_path, show_section, share_permission }}
 {{#each friends}}
-  <p><img src="https://graph.facebook.com/{{fbid}}/picture"></img> <a href="http://www.facebook.com/{{fbid}}">{{name}}</a> {{#if ../show_section}} - Sec. {{section}}{{/if}} {{#if ../share_permission}}{{#if ../share}}<a href="{{../../../api_url}}schedule_image?term={{../../../term}}&fbid={{../fbid}}" data-lightbox="{{../fbid}}{{../../../course}}" title="{{../name}}'s Schedule"><img src="{{../../../schedule_icon_path}}" width="50"></img></a>{{/if}}{{/if}}
+  <p><img src="https://graph.facebook.com/{{fbid}}/picture"></img> <a href="http://www.facebook.com/{{fbid}}">{{name}}</a> {{#if ../show_section}} - Sec. {{section}}{{/if}} {{#if ../share_permission}}{{#if ../share}}<a href="{{../../../api_url}}schedule_image?term={{../../../term}}&fbid={{../fbid}}" data-lightbox="{{../fbid}}{{../../../course}}{{section}}" title="{{../name}}'s Schedule"><img src="{{../../../schedule_icon_path}}" width="50"></img></a>{{/if}}{{/if}}
   </p>
 {{/each}}
