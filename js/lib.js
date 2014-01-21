@@ -17,6 +17,7 @@ var CHECKBOX_ID = "share-permission";
 var FRIEND_ICON_PATH = chrome.extension.getURL('images/friend_icon.png');
 var NOTE_ID = "permissions-note"; // id of element containing permissions note
 var TOOLTIP_CSS = chrome.extension.getURL('css/tooltip.css');
+var NO_SECTION = "0000"; // section code if no section provided
 var FBID = null;
 var NAME = null;
 var ACCESS_TOKEN = null;
@@ -257,7 +258,7 @@ function getFriendsOfFriends(term, course, section, coursesFunc) {
   })(course, section);
 
   // invalid section number
-  if (section === "0000") { section = null; }
+  if (section == NO_SECTION) { section = null; }
 
   $.getJSON(API_URL + "friendsoffriends", { term: term, course: course, section: section }, 
     callback);
