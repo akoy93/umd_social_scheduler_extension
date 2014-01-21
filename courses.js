@@ -41,7 +41,7 @@ $(document).ready(function() {
     insertSocialInformation(container, courseCode, NO_SECTION);
 
     // generate content for individual sections
-    (function(courseCode, parent) {
+    (function(parent) {
       parent.find(SECTIONS_LINK_SELECTOR).first().one("click", function() {
         // wait for section divs to populate
         (function processSections() {
@@ -49,16 +49,17 @@ $(document).ready(function() {
           if (sections.length !== 0) {
             // wait for section-id spans to populate
             if (sections.last().find(SECTION_CODE_SELECTOR).first().html() === undefined) {
-              setTimeout(function() { processSections(); }, 50)
+              setTimeout(function() { processSections(); }, 200)
             } else {
               // reaching this point, we know we can read each section
               sections.each(function() {
                 var sectionSpan = $(this).find(SECTION_CODE_SELECTOR);
                 var section = sectionSpan.html().replace(/\s+/g, '');
+
                 // insert friend icons
-                sectionSpan.prepend(renderHandlebars(FRIEND_ICON_TEMPLATE,
+                $(this).prepend(renderHandlebars(FRIEND_ICON_TEMPLATE,
                   { course: courseCode, section: section, friend_icon_path: FRIEND_ICON_PATH }));
-                insertSocialInformation(container, courseCode, section);
+                insertSocialInformation(container, courseCode, section, $(this));
               });
             }
           } else {
@@ -66,11 +67,11 @@ $(document).ready(function() {
           }
         })();
       });
-    })(courseCode, $(this));
+    })($(this));
   });
 
   // insert tooltip div in container for the corresponding courseCode/section
-  function insertSocialInformation(container, courseCode, section) {
+  function insertSocialInformation(container, courseCode, section, sectionDiv) {
     // creates tooltip interactivity with friends icons
     var setTooltipEvent = function(element) {
       element.attr("style", "cursor: pointer;"); // this gets overridden if put in template
@@ -100,6 +101,12 @@ $(document).ready(function() {
         var selector = "#" + courseCode + section + "icon";
         if (response.data.length > 0) {
           var element = $(selector);
+          if (sectionDiv != null) {
+            console.log("here");
+            sectionDiv.addClass("twelve columns");
+            sectionDiv.children.wrapAll('<div class="ten columns" />');
+            element.parent().parent().wrap('<div class="two columns" />');
+          }
           element.show();
           element.parent().append(renderHandlebars(FRIEND_COUNT_TEMPLATE, 
             { count: response.data.length, label: label }));
