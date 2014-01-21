@@ -18,6 +18,7 @@ var FRIEND_ICON_PATH = chrome.extension.getURL('images/friend_icon.png');
 var NOTE_ID = "permissions-note"; // id of element containing permissions note
 var TOOLTIP_CSS = chrome.extension.getURL('css/tooltip.css');
 var NO_SECTION = "0000"; // section code if no section provided
+var SESSION_CREATED = false;
 var FBID = null;
 var NAME = null;
 var ACCESS_TOKEN = null;
@@ -169,6 +170,7 @@ function handleLoginLogoutEvents() {
     $.getJSON(API_URL + "access", { access_token: ACCESS_TOKEN }, function(response) {
       if (response.success) {
         SHARE_PERMISSION = response.data.share;
+        SESSION_CREATED = true;
         hookUpCheckbox();
         $("#" + CHECKBOX_DIV_ID).show();
         $("#" + LOADER_ID).hide();
@@ -185,6 +187,7 @@ function handleLoginLogoutEvents() {
   $("#" + USER_INFO_DIV_ID).on("logout", function() {
     manageSessionInPage(false);
     FBID = null; NAME = null; ACCESS_TOKEN = null; SHARE_PERMISSION = null;
+    SESSION_CREATED = false;
     $("#" + LOGIN_INFO_DIV_ID).empty();
     $("#" + CHECKBOX_DIV_ID).hide();
     $("#" + SKELETON_ID).remove();
