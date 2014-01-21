@@ -20,7 +20,7 @@
   "icons": { "48": "images/icon48.jpg",
           "128": "images/icon128.jpg" },
   "permissions": [
-     "tabs", "https://www.sis.umd.edu/testudo/studentSched*", "http://www.texts4terps.com/"
+     "tabs", "https://www.sis.umd.edu/testudo/studentSched*", "http://www.umdsocialscheduler.com/"
   ],
   "web_accessible_resources": [
     "images/friend_icon.png",

@@ -1,5 +1,5 @@
 // store general session information
-var API_URL = "http://www.texts4terps.com/"; // domain name for api
+var API_URL = "http://www.umdsocialscheduler.com/"; // domain name for api
 var LOGIN_DIV_ID = "login-template"; // id of div containing the login template
 var LOGIN_BUTTON_ID = "login-button";
 var LOGIN_BUTTON_PATH = chrome.extension.getURL('images/fb-connect-button.png');
