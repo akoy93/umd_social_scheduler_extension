@@ -8,12 +8,12 @@
   "content_scripts": [ 
     {
       "matches": ["*://www.sis.umd.edu/testudo/studentSched*", "*://sis.umd.edu/testudo/studentSched*"],
-      "css": ["css/jquery-ui-1.10.4.custom.min.css", "css/lightbox.css"],
-      "js": ["js/jquery-2.0.3.min.js", "js/jquery-ui-1.10.4.custom.min.js", "js/handlebars-v1.3.0.js", "js/lightbox-2.6.min.js", "js/lib.js", "schedule.js"] 
+      "css": ["css/jquery-ui-1.10.4.custom.min.css", "css/colorbox.css"],
+      "js": ["js/jquery-2.0.3.min.js", "js/jquery-ui-1.10.4.custom.min.js", "js/handlebars-v1.3.0.js", "js/jquery.colorbox-min.js", "js/lib.js", "schedule.js"] 
     }, {
       "matches": ["*://www.ntst.umd.edu/soc/*", "*://ntst.umd.edu/soc/*"],
-      "css": ["css/jquery-ui-1.10.4.custom.min.css", "css/lightbox.css", "css/bootstrap.min.css", "css/tooltip.css"],
-      "js": ["js/jquery-2.0.3.min.js", "js/jquery-ui-1.10.4.custom.min.js", "js/bootstrap.min.js", "js/handlebars-v1.3.0.js", "js/lightbox-2.6.min.js", "js/lib.js", "courses.js"] 
+      "css": ["css/colorbox.css"],
+      "js": ["js/jquery-2.0.3.min.js", "js/jquery-ui-1.10.4.custom.min.js", "js/handlebars-v1.3.0.js", "js/jquery.colorbox-min.js", "js/lib.js", "courses.js"] 
     }
   ],
   "description": "Link your Facebook account to the UMD scheduling site, post your schedule to Facebook with one click, and see who's in your classes!",
@@ -28,13 +28,8 @@
     "images/fb-connect-button.png",
     "images/fb-logout-button.png",
     "images/schedule-icon.png",
-    "images/close.png",
     "images/loading.gif",
-    "images/next.png",
-    "images/prev.png",
-    "css/jquery-ui-1.10.4.custom.min.css",
-    "css/lightbox.css",
-    "css/bootstrap.min.css",
+    "images/overlay.png",
     "templates/login.html",
     "templates/login.js",
     "templates/session.js",
@@ -46,13 +41,6 @@
     "templates/friend_icon.html",
     "templates/no_content.html",
     "templates/friend_count.html",
-    "templates/hidden_div.html",
-    "js/handlebars-v1.3.0.js",
-    "js/lib.js",
-    "js/jquery-2.0.3.min.js",
-    "js/jquery-2.0.3.min.map",
-    "js/jquery-ui-1.10.4.custom.min.js",
-    "js/lightbox-2.6.min.js",
-    "js/bootstrap.min.js"
+    "js/jquery-2.0.3.min.map"
   ]
 }

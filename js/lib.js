@@ -221,7 +221,9 @@ function getFriends(term, course, section, coursesFunc) {
         var params = { api_url: API_URL, course: course, term: term, show_section: true,
           schedule_icon_path: SCHEDULE_ICON_PATH, friends: response.data, 
           share_permission: SHARE_PERMISSION };
-        $(selector).html(renderHandlebars(FRIENDS_LIST_TEMPLATE, params));
+        var element = $(selector);
+        element.html(renderHandlebars(FRIENDS_LIST_TEMPLATE, params));
+        element.find(".schedule-image").colorbox({photo: true}); // use colorbox to display schedule images
       }
       // caller can pass in additional code through an argument
       if (coursesFunc) { coursesFunc.call(this, response); }
