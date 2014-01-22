@@ -1,5 +1,5 @@
 // gracefully degrade if server is down
-if (!ping()) { return; }
+if (!ping()) { $("#" + LOGIN_DIV_ID).remove(); return; }
 
 var COURSE_SELECTOR = "div.course"; // course code is the html of the div
 var FRIEND_ICON_PLACEMENT_SELECTOR = "div.course-id-container.one.columns";
@@ -42,31 +42,41 @@ $(document).ready(function() {
 
     // generate content for individual sections after "show sections" click
     (function(parent) {
-      parent.find(SECTIONS_LINK_SELECTOR).first().one("click", function() {
-        // wait for section divs to populate
-        (function processSections() {
-          var sections = parent.find(SECTION_SELECTOR);
-          if (sections.length !== 0) {
-            // wait for section-id spans to populate
-            if (sections.last().find(SECTION_CODE_SELECTOR).first().html() === undefined) {
-              setTimeout(function() { processSections(); }, 200)
-            } else {
-              // reaching this point, we know we can read each section
-              sections.each(function() {
-                var sectionSpan = $(this).find(SECTION_CODE_SELECTOR);
-                var section = sectionSpan.html().replace(/\s+/g, '');
+      var insertSectionContent = function(sections) {
+        var result = false;
+        sections.each(function() {
+          var sectionSpan = $(this).find(SECTION_CODE_SELECTOR);
+          var section = sectionSpan.html().replace(/\s+/g, '');
 
-                // insert friend icons
-                $(this).append(renderHandlebars(FRIEND_ICON_TEMPLATE,
-                  { course: courseCode, section: section, friend_icon_path: FRIEND_ICON_PATH, compact: true }));
-                insertSocialInformation(container, courseCode, section);
-              });
+          // insert friend icons
+          $(this).append(renderHandlebars(FRIEND_ICON_TEMPLATE,
+            { course: courseCode, section: section, friend_icon_path: FRIEND_ICON_PATH, compact: true }));
+          insertSocialInformation(container, courseCode, section);
+          result = true;
+        });
+        return result;
+      };
+
+      // if sections aren't shown already, add a click listener
+      if (!insertSectionContent(parent.find(SECTION_SELECTOR))) {
+        parent.find(SECTIONS_LINK_SELECTOR).first().one("click", function() {
+          // wait for section divs to populate
+          (function processSections() {
+            var sections = parent.find(SECTION_SELECTOR);
+            if (sections.length !== 0) {
+              // wait for section-id spans to populate
+              if (sections.last().find(SECTION_CODE_SELECTOR).first().html() === undefined) {
+                setTimeout(function() { processSections(); }, 200)
+              } else {
+                // reaching this point, we know we can read each section
+                insertSectionContent(sections);
+              }
+            } else {
+              setTimeout(function() { processSections(); }, 50);
             }
-          } else {
-            setTimeout(function() { processSections(); }, 50);
-          }
-        })();
-      });
+          })();
+        });
+      }
     })($(this));
   });
 
