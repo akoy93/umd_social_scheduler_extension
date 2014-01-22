@@ -1,3 +1,4 @@
+document.getElementById("show-all-sections-button").remove();
 // gracefully degrade if server is down
 if (!ping()) { $("#" + LOGIN_DIV_ID).remove(); return; }
 

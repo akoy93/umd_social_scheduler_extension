@@ -1,0 +1,1 @@
+var BOOK_TEMPLATE = "amazon_book.html"
