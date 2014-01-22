@@ -153,13 +153,17 @@ function handleLoginLogoutEvents() {
       $("#" + CHECKBOX_ID).change(function() {
         if(this.checked) {
           $.getJSON(API_URL + "enable_sharing", function(response) {
-            if (!response.success) {
+            if (response.success) {
+              location.reload();
+            } else {
               alert("Failed to update permissions. Please refresh the page and try again.");
             }
           });
         } else {
           $.getJSON(API_URL + "disable_sharing", function(response) {
-            if (!response.success) {
+            if (response.success) {
+              location.reload();
+            } else {
               alert("Failed to update permissions. Please refresh the page and try again.");
             }
           });
