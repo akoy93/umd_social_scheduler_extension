@@ -1,3 +1,7 @@
 {{! Handlebars template for friends count message}}
-{{! Parameters: count, label}}
-<p style="font-size: 9px; color: #4c66a4;"><b>({{count}})</b> {{label}}</p>
+{{! Parameters: count, label, compact}}
+{{#unless compact}}
+  <p style="font-size: 9px; color: #4c66a4;"><b>({{count}})</b> {{label}}</p>
+{{else}}
+  <span style="font-size: 9px; color: #4c66a4; padding-left: 10px;"><b>({{count}})</b> {{label}}</span>
+{{/unless}}

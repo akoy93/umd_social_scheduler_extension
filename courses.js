@@ -40,7 +40,7 @@ $(document).ready(function() {
     // generate tabs for social information and place them in the container
     insertSocialInformation(container, courseCode, NO_SECTION);
 
-    // generate content for individual sections
+    // generate content for individual sections after "show sections" click
     (function(parent) {
       parent.find(SECTIONS_LINK_SELECTOR).first().one("click", function() {
         // wait for section divs to populate
@@ -57,9 +57,9 @@ $(document).ready(function() {
                 var section = sectionSpan.html().replace(/\s+/g, '');
 
                 // insert friend icons
-                $(this).prepend(renderHandlebars(FRIEND_ICON_TEMPLATE,
-                  { course: courseCode, section: section, friend_icon_path: FRIEND_ICON_PATH }));
-                insertSocialInformation(container, courseCode, section, $(this));
+                $(this).append(renderHandlebars(FRIEND_ICON_TEMPLATE,
+                  { course: courseCode, section: section, friend_icon_path: FRIEND_ICON_PATH, compact: true }));
+                insertSocialInformation(container, courseCode, section);
               });
             }
           } else {
@@ -71,7 +71,7 @@ $(document).ready(function() {
   });
 
   // insert tooltip div in container for the corresponding courseCode/section
-  function insertSocialInformation(container, courseCode, section, sectionDiv) {
+  function insertSocialInformation(container, courseCode, section) {
     // creates tooltip interactivity with friends icons
     var setTooltipEvent = function(element) {
       element.attr("style", "cursor: pointer;"); // this gets overridden if put in template
@@ -97,19 +97,15 @@ $(document).ready(function() {
     // this adds behavior that renders the information in the response and inserts
     // it into the page
     var createCallback = function(courseCode, section, label) {
+      if (!createCallback.cache) { createCallback.cache = {}; }
       return function(response) {
-        var selector = "#" + courseCode + section + "icon";
         if (response.data.length > 0) {
-          var element = $(selector);
-          if (sectionDiv != null) {
-            console.log("here");
-            sectionDiv.addClass("twelve columns");
-            sectionDiv.children.wrapAll('<div class="ten columns" />');
-            element.parent().parent().wrap('<div class="two columns" />');
-          }
+          var iconDiv = $("#" + courseCode + section + "div");
+          var element = $("#" + courseCode + section + "icon");
+          iconDiv.show();
           element.show();
           element.parent().append(renderHandlebars(FRIEND_COUNT_TEMPLATE, 
-            { count: response.data.length, label: label }));
+            { count: response.data.length, label: label, compact: section != NO_SECTION }));
           setTooltipEvent(element);
         }  
       };

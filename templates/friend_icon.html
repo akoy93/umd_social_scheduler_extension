@@ -1,5 +1,9 @@
 {{! Handlebars template for friend icon tooltip }}
-{{! Parameters: friend_icon_path, course, section }}
-<center>
-  <span><img style="display: none;" data-tooltip="#{{course}}{{section}}" src="{{friend_icon_path}}" id="{{course}}{{#if section}}{{section}}{{/if}}icon"></img></span>
-</center>
+{{! Parameters: friend_icon_path, course, section, compact }}
+{{#unless compact}}
+  <center>
+    <span><img style="display: none;" data-tooltip="#{{course}}{{section}}" src="{{friend_icon_path}}" id="{{course}}{{#if section}}{{section}}{{/if}}icon"></img></span>
+  </center>
+{{else}}
+  <div id="{{course}}{{#if section}}{{section}}{{/if}}div"><span><img style="display: none;" data-tooltip="#{{course}}{{section}}" src="{{friend_icon_path}}" id="{{course}}{{#if section}}{{section}}{{/if}}icon" width="18" height="18"></img><span></div>
+{{/unless}}
