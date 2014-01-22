@@ -281,14 +281,14 @@ function getFriendsOfFriends(term, course, section, coursesFunc) {
           { message: "No suggestions to make" }));
       } else {
         var courseTabSelector = "#" + course + "count";
-        var friendsOfFriendsTabSelector = "#" + course + section + " #friendsoffriends-count";
+        var friendsTabSelector = "#" + course + section + " #friendsoffriends-count";
 
         // render people you may know list
         var params = { friends_of_friends: response.data, show_section: true };
         $(friendsOfFriendsSelector).html(renderHandlebars(FRIENDS_OF_FRIENDS_LIST_TEMPLATE, params));
 
         incrementCount(courseTabSelector, numFriendsOfFriends);
-        incrementCount(friendsofFriendsTabSelector, numFriendsOfFriends);
+        incrementCount(friendsTabSelector, numFriendsOfFriends);
       }
       // caller can pass in additional code through an argument
       if (coursesFunc) { coursesFunc.call(this, response); }

@@ -73,7 +73,9 @@ $(document).ready(function() {
                 + " Check your UMD Social Scheduler album!");
             } else {
               alert("Unable to post your schedule. Make sure you have allowed"
-                + " UMD Social Scheduler to post to Facebook on your behalf (re-login to allow).");
+                + " UMD Social Scheduler to post to Facebook on your behalf (re-login to allow)."
+                + " If that doesn't work, go to Facebook Account Settings > Apps > UMD "
+                + " Social Scheduler, remove, and try to login again.");
             }
           });
         });
