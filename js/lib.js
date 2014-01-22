@@ -214,6 +214,17 @@ function handleLoginLogoutEvents() {
   });
 }
 
+// increments tab count by given amount
+function incrementCount(selector, inc) {
+  var tab = $(selector);
+  if (tab.length != 0) {
+    var count = parseInt(tab.attr('count'));
+    count += inc;
+    tab.attr('count', count.toString());
+    tab.html('(' + count + ')');
+  }
+}
+
 // friends tabs template must have been rendered already
 // invokes the get friends request and sends the response to a generated callback
 // that inserts the data into the correct part of the template
@@ -221,17 +232,27 @@ function getFriends(term, course, section, coursesFunc) {
   var callback = (function(course, section) {
     return function(response) {
       if (!section) { section = ""; }
-      var selector = "#" + course + section + "friends";
-      if (response.data.length <= 0) {
-        $(selector).html(renderHandlebars(NO_CONTENT_TEMPLATE, 
+
+      var numFriends = response.data.length;
+      var friendsSelector = "#" + course + section + "friends";
+
+      if (numFriends <= 0) {
+        $(friendsSelector).html(renderHandlebars(NO_CONTENT_TEMPLATE, 
           { message: "No friends to display" }));
       } else {
+        var courseTabSelector = "#" + course + "count";
+        var friendsTabSelector = "#" + course + section + " #friends-count";
+      
+        // render friend list
         var params = { api_url: API_URL, course: course, term: term, show_section: true,
           schedule_icon_path: SCHEDULE_ICON_PATH, friends: response.data, 
           share_permission: SHARE_PERMISSION };
-        var element = $(selector);
+        var element = $(friendsSelector);
         element.html(renderHandlebars(FRIENDS_LIST_TEMPLATE, params));
         element.find(".schedule-image").colorbox({photo: true}); // use colorbox to display schedule images
+
+        incrementCount(courseTabSelector, numFriends);
+        incrementCount(friendsTabSelector, numFriends);
       }
       // caller can pass in additional code through an argument
       if (coursesFunc) { coursesFunc.call(this, response); }
@@ -251,13 +272,23 @@ function getFriendsOfFriends(term, course, section, coursesFunc) {
   var callback = (function(course, section) {
     return function(response) {
       if (!section) { section = ""; }
-      var selector = "#" + course + section + "friendsoffriends";
-      if (response.data.length <= 0) {
-        $(selector).html(renderHandlebars(NO_CONTENT_TEMPLATE,
+
+      var numFriendsOfFriends = response.data.length;
+      var friendsOfFriendsSelector = "#" + course + section + "friendsoffriends";
+
+      if (numFriendsOfFriends <= 0) {
+        $(friendsOfFriendsSelector).html(renderHandlebars(NO_CONTENT_TEMPLATE,
           { message: "No suggestions to make" }));
       } else {
+        var courseTabSelector = "#" + course + "count";
+        var friendsOfFriendsTabSelector = "#" + course + section + " #friendsoffriends-count";
+
+        // render people you may know list
         var params = { friends_of_friends: response.data, show_section: true };
-        $(selector).html(renderHandlebars(FRIENDS_OF_FRIENDS_LIST_TEMPLATE, params));
+        $(friendsOfFriendsSelector).html(renderHandlebars(FRIENDS_OF_FRIENDS_LIST_TEMPLATE, params));
+
+        incrementCount(courseTabSelector, numFriendsOfFriends);
+        incrementCount(friendsofFriendsTabSelector, numFriendsOfFriends);
       }
       // caller can pass in additional code through an argument
       if (coursesFunc) { coursesFunc.call(this, response); }
