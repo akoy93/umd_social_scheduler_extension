@@ -1,4 +1,8 @@
-document.getElementById("show-all-sections-button").remove();
+(function() { 
+  var s = document.getElementById("show-all-sections-button");
+  if (s != null) { s.remove(); }
+})();
+
 // gracefully degrade if server is down
 if (!ping()) { $("#" + LOGIN_DIV_ID).remove(); return; }
 
