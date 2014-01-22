@@ -69,7 +69,8 @@ Handlebars.registerHelper('loader_path', function() {
 function ping() {
   try {
     var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "GET", API_URL + "alive", false);
+    // we don't want a cached result:
+    xmlHttp.open( "GET", API_URL + "alive?t=" + Math.random(), false);
     xmlHttp.send();
     return JSON.parse(xmlHttp.responseText).success
   } catch(err) {

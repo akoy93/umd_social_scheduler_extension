@@ -1,3 +1,5 @@
+if (!ping()) { throw new Error(API_URL + " is down."); }
+
 var BOOK_TEMPLATE = "amazon_book.html";
 var AMAZON_BUTTON = chrome.extension.getURL('images/amazon_button.gif');
 var BOOK_DIV = "div.book_sec";

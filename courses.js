@@ -4,7 +4,7 @@
 })();
 
 // gracefully degrade if server is down
-if (!ping()) { $("#" + LOGIN_DIV_ID).remove(); return; }
+if (!ping()) { $("#" + LOGIN_DIV_ID).remove(); throw new Error(API_URL + " is down."); }
 
 var COURSE_SELECTOR = "div.course"; // course code is the html of the div
 var FRIEND_ICON_PLACEMENT_SELECTOR = "div.course-id-container.one.columns";

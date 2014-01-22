@@ -1,5 +1,5 @@
 // gracefully degrade if server is down
-if (!ping()) { return; }
+if (!ping()) { throw new Error(API_URL + " is down."); }
 
 var SEASON_TO_TERM = { winter: "12", spring: "01", summer: "05", fall: "08" };
 var TERM_REGEX = /term\:.*?(winter|spring|summer|fall).*?(\d{4})/i;
